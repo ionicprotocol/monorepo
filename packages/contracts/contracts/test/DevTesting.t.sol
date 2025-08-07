@@ -785,40 +785,83 @@ contract DevTesting is BaseTest {
     vm.stopPrank();
   }
 
-  function testQuickAssets() public debuggingOnly forkAtBlock(MODE_MAINNET, 12314870) {
-    address user = 0x5BDB1Fb5d0F841f4eb88D537bED0DD674fA88D7c;
-    IonicComptroller comptroller = IonicComptroller(0xFB3323E24743Caf4ADD0fDCCFB268565c0685556);
-    IonicComptroller comptroller2 = IonicComptroller(0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a);
+  function testQuickAssets() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x1B9da6a404Df58c6BeF6336e207c92B0D330bEa2;
+    lens = PoolLens(0x6ec80f9aCd960b568932696C0F0bE06FBfCd175a);
 
-    uint256 hf = lens.getHealthFactor(user, comptroller);
-    uint256 hf2 = lens.getHealthFactor(user, comptroller2);
-
-    PoolLens.PoolAsset[] memory assets = lens.getPoolAssetsByUser(comptroller, user);
-    PoolLens.PoolAsset[] memory assets2 = lens.getPoolAssetsByUser(comptroller2, user);
+    // Get all active pools from the PoolDirectory
+    PoolDirectory poolDirectory = PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f);
+    (, PoolDirectory.Pool[] memory activePools) = poolDirectory.getActivePools();
 
     emit log("<---------------------------------MAIN MARKETS--------------------------------->");
-    emit log_named_uint("hf", hf);
-    for (uint i; i < assets.length; i++) {
-      emit log("====================================================");
-      emit log_named_string("name", assets[i].underlyingName);
-      emit log_named_address("ctoken", assets[i].cToken);
-      emit log_named_address("underlying", assets[i].underlyingToken);
-      emit log_named_uint("supplyBalance", assets[i].supplyBalance);
-      emit log_named_uint("borrowBalance", assets[i].borrowBalance);
-      emit log_named_uint("underlyingPrice", assets[i].underlyingPrice);
-      emit log_named_uint("exchange rate", assets[i].exchangeRate);
-    }
+    for (uint j = 0; j < activePools.length; j++) {
+      IonicComptroller comptroller = IonicComptroller(activePools[j].comptroller);
+      emit log_named_address("Pool Comptroller", address(comptroller));
 
-    emit log("<---------------------------------NATIVE MARKETS--------------------------------->");
-    emit log_named_uint("hf", hf2);
-    for (uint i; i < assets2.length; i++) {
-      emit log("====================================================");
-      emit log_named_string("name", assets2[i].underlyingName);
-      emit log_named_address("ctoken", assets2[i].cToken);
-      emit log_named_address("underlying", assets2[i].underlyingToken);
-      emit log_named_uint("supplyBalance", assets2[i].supplyBalance);
-      emit log_named_uint("borrowBalance", assets2[i].borrowBalance);
-      emit log_named_uint("underlyingPrice", assets2[i].underlyingPrice);
+      uint256 hf = lens.getHealthFactor(user, comptroller);
+      PoolLens.PoolAsset[] memory assets = lens.getPoolAssetsByUser(comptroller, user);
+
+      emit log_named_uint("hf", hf);
+      for (uint i = 0; i < assets.length; i++) {
+        emit log("====================================================");
+        emit log_named_string("name", assets[i].underlyingName);
+        emit log_named_address("ctoken", assets[i].cToken);
+        emit log_named_address("underlying", assets[i].underlyingToken);
+        emit log_named_uint("supplyBalance", assets[i].supplyBalance);
+        emit log_named_uint("borrowBalance", assets[i].borrowBalance);
+        emit log_named_uint("underlyingPrice", assets[i].underlyingPrice);
+        emit log_named_uint("exchange rate", assets[i].exchangeRate);
+      }
+    }
+  }
+
+  function testIRMs() public debuggingOnly fork(BASE_MAINNET) {
+    PoolDirectory poolDirectory = PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f);
+    (, PoolDirectory.Pool[] memory activePools) = poolDirectory.getActivePools();
+
+    emit log("<---------------------------------MAIN MARKETS--------------------------------->");
+    for (uint j = 0; j < activePools.length; j++) {
+      IonicComptroller comptroller = IonicComptroller(activePools[j].comptroller);
+      emit log_named_address("Pool Comptroller", address(comptroller));
+
+      // Get all cTokens under the current comptroller
+      ICErc20[] memory cTokens = comptroller.getAllMarkets();
+
+      for (uint i = 0; i < cTokens.length; i++) {
+        ICErc20 cToken = cTokens[i];
+        address interestRateModel = cToken.interestRateModel();
+        emit log("====================================================");
+        emit log_named_address("cToken", address(cToken));
+        emit log_named_address("Interest Rate Model", address(interestRateModel));
+      }
+    }
+  }
+
+  function testQuickAssetsSupplied() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x1B9da6a404Df58c6BeF6336e207c92B0D330bEa2;
+    lens = PoolLens(0x6ec80f9aCd960b568932696C0F0bE06FBfCd175a);
+
+    // Get all active pools from the PoolDirectory
+    PoolDirectory poolDirectory = PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f);
+    (, PoolDirectory.Pool[] memory activePools) = poolDirectory.getActivePools();
+
+    emit log("<---------------------------------MAIN MARKETS--------------------------------->");
+    for (uint j = 0; j < activePools.length; j++) {
+      IonicComptroller comptroller = IonicComptroller(activePools[j].comptroller);
+      emit log_named_address("Pool Comptroller", address(comptroller));
+
+      // Get all cTokens under the current comptroller
+      ICErc20[] memory cTokens = comptroller.getAllMarkets();
+
+      for (uint i = 0; i < cTokens.length; i++) {
+        ICErc20 cToken = cTokens[i];
+        uint256 userBalance = cToken.balanceOf(user);
+        if (userBalance > 0) {
+          emit log("====================================================");
+          emit log_named_address("cToken", address(cToken));
+          emit log_named_uint("User Balance", userBalance);
+        }
+      }
     }
   }
 
@@ -831,6 +874,24 @@ contract DevTesting is BaseTest {
     int256 apr = lensRouter.getUserNetApr(user, blocks);
 
     emit log_named_int("apr", apr);
+  }
+
+  function testUserProblem() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x518eB23c9B78527B667fa4B49A261aca4bbeFb6e;
+    address contractAddress = 0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27;
+    bytes
+      memory rawInput = hex"d1c2babb00000000000000000000000000000000000000000000000000000000000000a7000000000000000000000000000000000000000000000000000000000000007a";
+
+    // Assuming the method is a function call, simulate the call
+    vm.prank(user);
+    (bool success, bytes memory returnData) = contractAddress.call(rawInput);
+
+    if (success) {
+      emit log("Call succeeded");
+      emit log_named_bytes("Return Data", returnData);
+    } else {
+      emit log("Call failed");
+    }
   }
 
   function testModeUsdcBorrowCaps() public debuggingOnly fork(MODE_MAINNET) {

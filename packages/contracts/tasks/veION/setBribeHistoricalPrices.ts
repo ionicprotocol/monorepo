@@ -366,7 +366,8 @@ task("voter:setHistoricalPrice", "set historical prices over a range on Voter co
     const chainId = parseInt(await getChainId());
 
     const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
-    const lpToken = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
+    const lpToken =
+      chainId === 34443 ? "0x690A74d2eC0175a69C0962B309E03021C0b5002E" : "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
 
     const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
@@ -447,10 +448,26 @@ task("voter:distribute", "set historical prices over a range on Voter contract")
 
     const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
-    // const toggleDistributorTimeLockOff = await voter.write.toggleDistributionTimelockAlive([false]);
-    // console.log(`Tx sent: ${toggleDistributorTimeLockOff}`);
-    // const toggleReceipt = await publicClient.waitForTransactionReceipt({ hash: toggleDistributorTimeLockOff });
-    // console.log(`✅ Successfully distributed rewards on Voter contract:`, toggleReceipt.transactionHash);
+    const { deployer } = await getNamedAccounts();
+    const chainId = parseInt(await getChainId());
+
+    const ionToken = await viem.getContractAt(
+      "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+      chainDeployConfig[chainId].config.ION as Address
+    );
+
+    const ionBalance = BigInt(await ionToken.read.balanceOf([deployer as Address]));
+    console.log(`ION balance in deployer's wallet: ${formatEther(ionBalance)} `);
+
+    if (ionBalance > 0n) {
+      console.log("Transferring ION tokens to Voter contract before distribution");
+      const transferTx = await ionToken.write.transfer([voter.address, ionBalance]);
+      console.log(`Transaction sent: ${transferTx}`);
+      const transferReceipt = await publicClient.waitForTransactionReceipt({ hash: transferTx });
+      console.log(`✅ Successfully transferred ION tokens to Voter contract:`, transferReceipt.transactionHash);
+    } else {
+      console.log("No ION tokens to transfer.");
+    }
 
     console.log("Sending transaction to distribute rewards on Voter contract");
     const tx = await voter.write.distributeRewards();
