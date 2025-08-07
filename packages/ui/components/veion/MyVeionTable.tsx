@@ -13,6 +13,7 @@ import type {
 import TokenPair from '@ui/components/TokenPair';
 import { pools } from '@ui/constants';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import type { MyVeionData } from '@ui/types/veION';
 
 import ExtendVeion from './ExtendVeion';
@@ -32,8 +33,10 @@ function MyVeionTable() {
   const router = useRouter();
   const {
     setSelectedManagePosition,
-    locks: { myLocks, isLoading }
+    locks: { myLocks, isLoading },
+    currentChain
   } = useVeIONContext();
+  const { handleReset, isResetting } = useVeIONVote(currentChain);
 
   const hasLockExpired = (lockExpiryDate: string, isPermanent: boolean) => {
     if (isPermanent) return false;
@@ -134,6 +137,17 @@ function MyVeionTable() {
           data.lockExpires.isPermanent
         );
 
+        const handleResetClick = async () => {
+          try {
+            await switchChain({
+              chainId: data.chainId
+            });
+            await handleReset(data.id);
+          } catch (error) {
+            console.error('Reset failed:', error);
+          }
+        };
+
         return (
           <div className="flex gap-2 w-full">
             {/* {isExpired ? (
@@ -177,6 +191,14 @@ function MyVeionTable() {
                 label="Vote"
                 bg="bg-white/10"
                 className="bg-accent"
+              />
+              <ActionButton
+                half
+                action={handleResetClick}
+                label={isResetting ? 'Resetting...' : 'Reset'}
+                bg="bg-white/10"
+                className="bg-red-500 hover:bg-red-600 text-white"
+                disabled={isResetting}
               />
             </>
             {/* )} */}
