@@ -157,7 +157,7 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
               <button
                 onClick={handleFullReset}
                 className="px-4 py-2 text-sm text-white/60 hover:text-white/80 transition-colors border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isVoting}
+                disabled={!hasVotes || isVoting}
               >
                 Reset
               </button>
