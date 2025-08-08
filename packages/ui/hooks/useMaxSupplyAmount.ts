@@ -65,6 +65,16 @@ export function useMaxSupplyAmount(
     }
   });
 
+  // Debug the balance retrieval
+  console.log('Balance debug:', {
+    isNativeToken,
+    nativeBalance: nativeBalance?.value?.toString(),
+    tokenBalance: tokenBalance?.toString(),
+    underlyingToken: asset.underlyingToken,
+    address,
+    supplyCapsStatus: !!supplyCapsDataForAsset
+  });
+
   // Combined balance from either native or token
   const balance = isNativeToken ? nativeBalance?.value : tokenBalance;
 
@@ -81,38 +91,105 @@ export function useMaxSupplyAmount(
       balance
     ],
     queryFn: async () => {
-      if (!sdk || !address || !supplyCapsDataForAsset || !balance) {
+      console.log('Query function executing. Dependencies:', {
+        sdk: !!sdk,
+        address: !!address,
+        supplyCapsData: !!supplyCapsDataForAsset,
+        balance: balance?.toString()
+      });
+
+      // IMPORTANT CHANGE: Let's proceed even without supplyCapsDataForAsset
+      if (!sdk || !address || balance === undefined) {
         return null;
       }
 
       try {
-        const comptroller = sdk.createComptroller(comptrollerAddress);
-        const [supplyCap, isWhitelisted] = await Promise.all([
-          comptroller.read.supplyCaps([asset.cToken]),
-          comptroller.read.isSupplyCapWhitelisted([asset.cToken, address])
-        ]);
+        // Get a valid balance value - this is correctly showing 2 tokens
+        const userBalance = balance;
 
-        let bigNumber: bigint;
-
-        // If address isn't in supply cap whitelist and asset has supply cap
-        if (!isWhitelisted && supplyCap > 0n) {
-          const availableCap =
-            supplyCap - supplyCapsDataForAsset.nonWhitelistedTotalSupply;
-          bigNumber = availableCap <= balance ? availableCap : balance;
-        } else {
-          bigNumber = balance;
+        // If supplyCapsDataForAsset is undefined, just use the balance directly
+        if (!supplyCapsDataForAsset) {
+          console.log(
+            'No supply caps data, using direct balance:',
+            userBalance.toString()
+          );
+          return {
+            bigNumber: userBalance,
+            number: Number(formatUnits(userBalance, asset.underlyingDecimals))
+          };
         }
 
-        return {
-          bigNumber,
-          number: Number(formatUnits(bigNumber, asset.underlyingDecimals))
-        };
+        const comptroller = sdk.createComptroller(comptrollerAddress);
+
+        try {
+          const [supplyCap, isWhitelisted] = await Promise.all([
+            comptroller.read.supplyCaps([asset.cToken]),
+            comptroller.read.isSupplyCapWhitelisted([asset.cToken, address])
+          ]);
+
+          console.log('Supply cap debug:', {
+            supplyCap: supplyCap.toString(),
+            nonWhitelistedTotalSupply:
+              supplyCapsDataForAsset.nonWhitelistedTotalSupply.toString(),
+            balance: balance.toString(),
+            isWhitelisted
+          });
+
+          let bigNumber: bigint;
+
+          if (!isWhitelisted && supplyCap > 0n) {
+            const totalSupply =
+              supplyCapsDataForAsset.nonWhitelistedTotalSupply;
+
+            // Make sure availableCap doesn't go negative
+            const availableCap =
+              totalSupply >= supplyCap ? 0n : supplyCap - totalSupply;
+
+            console.log('Available cap:', availableCap.toString());
+
+            bigNumber =
+              availableCap <= userBalance ? availableCap : userBalance;
+          } else {
+            bigNumber = userBalance;
+          }
+
+          const formattedNumber = Number(
+            formatUnits(bigNumber, asset.underlyingDecimals)
+          );
+
+          console.log('Final calculated values:', {
+            bigNumber: bigNumber.toString(),
+            formattedNumber
+          });
+
+          return {
+            bigNumber,
+            number: formattedNumber
+          };
+        } catch (e) {
+          console.error('Error in comptroller calls:', e);
+          // Fall back to just using the balance if comptroller calls fail
+          return {
+            bigNumber: userBalance,
+            number: Number(formatUnits(userBalance, asset.underlyingDecimals))
+          };
+        }
       } catch (e) {
-        console.warn(
+        console.error(
           'Getting max supply amount error:',
           { address, cToken: asset.cToken, comptrollerAddress },
           e
         );
+
+        // If we have a balance, return it as fallback
+        if (balance) {
+          console.log('Returning fallback balance due to error');
+          return {
+            bigNumber: balance,
+            number: Number(formatUnits(balance, asset.underlyingDecimals))
+          };
+        }
+
         return null;
       }
     },
@@ -121,7 +198,8 @@ export function useMaxSupplyAmount(
       !!asset &&
       !!sdk &&
       !!comptrollerAddress &&
-      !!supplyCapsDataForAsset &&
+      // IMPORTANT: Removed the supplyCapsDataForAsset dependency here!
+      // Now we'll fall back to the raw balance if supply caps data is unavailable
       balance !== undefined,
     refetchInterval: 5000
   });
