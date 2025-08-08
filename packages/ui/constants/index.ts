@@ -231,15 +231,15 @@ export const pools: Record<number, PoolParams> = {
           'KLIMA'
         ]
       }
+    ],
+    vaults: [
+      {
+        id: 'vault',
+        name: 'Supply Vaults',
+        description: 'Optimized yield strategies',
+        assets: ['USDC', 'WETH']
+      }
     ]
-    // vaults: [
-    //   {
-    //     id: 'vault',
-    //     name: 'Supply Vaults',
-    //     description: 'Optimized yield strategies',
-    //     assets: ['USDC', 'WETH']
-    //   }
-    // ]
   },
   [mode.id]: {
     hexcode: '#3bff89',
