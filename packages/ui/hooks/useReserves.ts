@@ -14,10 +14,10 @@ interface Reserves {
   token: bigint;
 }
 
-type SupportedToken = 'eth' | 'mode' | 'weth';
+type SupportedToken = 'eth' | 'lsk' | 'mode' | 'weth';
 
 export function useReserves(chainId: number) {
-  const tokens = ['eth', 'mode', 'weth'] as const;
+  const tokens = ['eth', 'mode', 'weth', 'lsk'] as const;
 
   const contracts = tokens.map((token) => ({
     abi: getReservesABI(chainId) as Abi,

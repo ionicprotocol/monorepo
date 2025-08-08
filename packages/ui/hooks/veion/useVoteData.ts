@@ -2,11 +2,11 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 
 import { usePublicClient } from 'wagmi';
 
+import { LiskLPPoolContract } from '@ui/constants/liskLp';
 import { getiVoterContract } from '@ui/constants/veIon';
-import { VOTERLENS_CHAIN_ADDRESSES } from '@ui/hooks/rewards/useBribeRewards';
 import { MarketSide } from '@ui/types/veION';
 
-import { useRewardTokens } from './useRewardTokens';
+import { VOTER_LENS_ADDRESSES } from './useMarketIncentives';
 
 import { voterLensAbi } from '@ionicprotocol/sdk';
 
@@ -61,7 +61,8 @@ interface MarketVoteInfo {
 // Chain-specific LP token addresses
 const LP_TOKEN_ADDRESSES = {
   8453: '0x0FAc819628a7F612AbAc1CaD939768058cc0170c', // Base
-  34443: '0x690A74d2eC0175a69C0962B309E03021C0b5002E' // Mode
+  34443: '0x690A74d2eC0175a69C0962B309E03021C0b5002E', // Mode
+  1135: LiskLPPoolContract
 } as const;
 
 const BASIS_POINTS = 10000n;
@@ -78,44 +79,32 @@ export function useVoteData({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const {
-    rewardTokens,
-    isLoading: isLoadingTokens,
-    error: tokenError
-  } = useRewardTokens(chain);
-
-  const voterContract = useMemo(() => getiVoterContract(chain), [chain]);
+  const voterContract = useMemo(() => {
+    const contract = getiVoterContract(chain);
+    return contract;
+  }, [chain]);
 
   const lpTokenAddress = useMemo(() => {
-    return (
+    const address =
       LP_TOKEN_ADDRESSES[chain as keyof typeof LP_TOKEN_ADDRESSES] ||
-      ('0x0000000000000000000000000000000000000000' as `0x${string}`)
-    );
+      ('0x0000000000000000000000000000000000000000' as `0x${string}`);
+    return address;
   }, [chain]);
 
   const voterLensAddress = useMemo(() => {
-    return (
-      VOTERLENS_CHAIN_ADDRESSES[
-        chain as keyof typeof VOTERLENS_CHAIN_ADDRESSES
-      ] || ('0x0000000000000000000000000000000000000000' as `0x${string}`)
-    );
+    const address =
+      VOTER_LENS_ADDRESSES[chain as keyof typeof VOTER_LENS_ADDRESSES] ||
+      ('0x0000000000000000000000000000000000000000' as `0x${string}`);
+    return address;
   }, [chain]);
 
   const formatValue = (value: bigint): number =>
     Number((value * BASIS_POINTS) / DECIMALS_SCALAR);
 
   const fetchVoteData = useCallback(async () => {
-    if (
-      !voterContract ||
-      !publicClient ||
-      !marketAddresses.length ||
-      !rewardTokens?.length ||
-      isLoadingTokens
-    ) {
-      if (!isLoadingTokens) {
-        setVoteData({});
-        setIsLoading(false);
-      }
+    if (!voterContract || !publicClient || !marketAddresses.length) {
+      setVoteData({});
+      setIsLoading(false);
       return;
     }
 
@@ -251,13 +240,10 @@ export function useVoteData({
     fetchVoteData();
   }, [fetchVoteData]);
 
-  const combinedIsLoading = isLoading || isLoadingTokens;
-  const combinedError = error || tokenError;
-
   return {
     voteData,
-    isLoading: combinedIsLoading,
-    error: combinedError,
+    isLoading,
+    error,
     refresh: fetchVoteData
   };
 }

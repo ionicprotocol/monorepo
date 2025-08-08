@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { erc20Abi, parseEther, parseUnits } from 'viem';
+import { erc20Abi, parseUnits } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 
 import { LiquidityContractAbi } from '@ui/constants/lp';
@@ -18,13 +18,13 @@ import {
 interface AddLiquidityParams {
   tokenAmount: string;
   tokenBAmount: string;
-  selectedToken: 'eth' | 'mode' | 'weth';
+  selectedToken: 'eth' | 'lsk' | 'mode' | 'weth';
   slippage?: number;
 }
 
 interface RemoveLiquidityParams {
   liquidity: string;
-  selectedToken: 'eth' | 'mode' | 'weth';
+  selectedToken: 'eth' | 'lsk' | 'mode' | 'weth';
 }
 
 interface LockVeIONParams {
@@ -51,18 +51,26 @@ export function useVeIONActions() {
     selectedToken
   }: AddLiquidityParams) => {
     try {
+      // For Lisk chain, we need to flip token order to match Velodrome contract expectations
+      // Velodrome Router expects WETH first, then ION on Lisk chain
+      const isLisk = currentChain === 1135;
+
       const args = {
-        tokenA: getToken(currentChain),
-        tokenB: getPoolToken(selectedToken),
+        tokenA: isLisk ? getPoolToken(selectedToken) : getToken(currentChain),
+        tokenB: isLisk ? getToken(currentChain) : getPoolToken(selectedToken),
         stable: false,
-        amountTokenADesired: parseUnits(tokenAmount, 18),
-        amounTokenAMin:
-          parseEther(tokenAmount) -
-          (parseEther(tokenAmount) * BigInt(5)) / BigInt(100),
-        amountTokenBDesired: parseUnits(tokenBAmount, 18),
-        amounTokenBMin:
-          parseEther(tokenBAmount) -
-          (parseEther(tokenBAmount) * BigInt(5)) / BigInt(100),
+        amountTokenADesired: isLisk
+          ? parseUnits(tokenBAmount, 18)
+          : parseUnits(tokenAmount, 18),
+        amountTokenAMin: isLisk
+          ? (parseUnits(tokenBAmount, 18) * 95n) / 100n
+          : (parseUnits(tokenAmount, 18) * 95n) / 100n,
+        amountTokenBDesired: isLisk
+          ? parseUnits(tokenAmount, 18)
+          : parseUnits(tokenBAmount, 18),
+        amountTokenBMin: isLisk
+          ? (parseUnits(tokenAmount, 18) * 95n) / 100n
+          : (parseUnits(tokenBAmount, 18) * 95n) / 100n,
         to: address,
         deadline: Math.floor((Date.now() + 3600000) / 1000)
       };
@@ -80,18 +88,16 @@ export function useVeIONActions() {
         functionName: 'approve'
       });
 
-      if (selectedToken !== 'eth') {
-        const approvalB = await walletClient.writeContract({
-          abi: erc20Abi,
-          account: walletClient.account,
-          address: args.tokenB,
-          args: [getSpenderContract(currentChain), args.amountTokenBDesired],
-          functionName: 'approve'
-        });
-        await publicClient?.waitForTransactionReceipt({
-          hash: approvalB
-        });
-      }
+      const approvalB = await walletClient.writeContract({
+        abi: erc20Abi,
+        account: walletClient.account,
+        address: args.tokenB,
+        args: [getSpenderContract(currentChain), args.amountTokenBDesired],
+        functionName: 'approve'
+      });
+      await publicClient?.waitForTransactionReceipt({
+        hash: approvalB
+      });
 
       setIsPending(true);
       await publicClient?.waitForTransactionReceipt({
@@ -107,7 +113,7 @@ export function useVeIONActions() {
             args.tokenA,
             args.stable,
             args.amountTokenADesired,
-            args.amounTokenAMin,
+            args.amountTokenAMin,
             args.amountTokenBDesired,
             args.to,
             args.deadline
@@ -116,7 +122,7 @@ export function useVeIONActions() {
           value: parseUnits(tokenBAmount, 18)
         });
 
-        const transaction = await publicClient?.waitForTransactionReceipt({
+        await publicClient?.waitForTransactionReceipt({
           hash: tx
         });
       } else {
@@ -130,15 +136,15 @@ export function useVeIONActions() {
             args.stable,
             args.amountTokenADesired,
             args.amountTokenBDesired,
-            args.amounTokenAMin,
-            args.amounTokenBMin,
+            args.amountTokenAMin,
+            args.amountTokenBMin,
             args.to,
             args.deadline
           ],
           functionName: 'addLiquidity'
         });
 
-        const transaction = await publicClient?.waitForTransactionReceipt({
+        await publicClient?.waitForTransactionReceipt({
           hash: tx
         });
       }

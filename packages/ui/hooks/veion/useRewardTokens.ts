@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 
 import { usePublicClient } from 'wagmi';
 
-import { VOTERLENS_CHAIN_ADDRESSES } from '../rewards/useBribeRewards';
-import { incentivesViewerAbi } from '../veion/useMarketIncentives';
-
-const INCENTIVES_VIEWER_ADDRESSES = VOTERLENS_CHAIN_ADDRESSES;
+import {
+  incentivesViewerAbi,
+  VOTER_LENS_ADDRESSES
+} from '../veion/useMarketIncentives';
 
 export const useRewardTokens = (chain: number) => {
   const publicClient = usePublicClient({ chainId: chain });
@@ -16,9 +16,7 @@ export const useRewardTokens = (chain: number) => {
   const hasFetchedTokensRef = useRef(false);
 
   const incentivesViewerAddress =
-    INCENTIVES_VIEWER_ADDRESSES[
-      chain as keyof typeof INCENTIVES_VIEWER_ADDRESSES
-    ];
+    VOTER_LENS_ADDRESSES[chain as keyof typeof VOTER_LENS_ADDRESSES];
 
   useEffect(() => {
     if (hasFetchedTokensRef.current && chain) {

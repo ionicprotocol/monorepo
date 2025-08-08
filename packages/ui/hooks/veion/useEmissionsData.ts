@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import { createPublicClient, http, formatUnits } from 'viem';
-import { mode } from 'viem/chains';
+import { mode, lisk } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -24,7 +24,8 @@ import { emissionsManagerAbi } from '@ionicprotocol/sdk';
 // Mapping of chain IDs to emissions manager contract addresses
 const EMISSIONS_MANAGER_ADDRESSES: Record<number, Address> = {
   8453: '0x74Dd8c217C01463b915A7e62879A496b3A5c07a5', // Base
-  34443: '0x2AA38965C8D37065Ed07EF7F5de6e341B4B9DAc7' // Mode
+  34443: '0x2AA38965C8D37065Ed07EF7F5de6e341B4B9DAc7', // Mode
+  1135: '0x503575C8B90c1984E15588ce4ab21e5246c80ae5' // Lisk
 };
 
 // Number of decimals for the collateral token (typically 18 for most ERC20 tokens)
@@ -76,6 +77,12 @@ export function useEmissionsData(chainId: number): EmissionsData {
     } else if (chainId === mode.id) {
       return createPublicClient({
         chain: mode,
+        transport: http()
+      });
+    } else if (chainId === 1135) {
+      // For Lisk chain
+      return createPublicClient({
+        chain: lisk,
         transport: http()
       });
     }

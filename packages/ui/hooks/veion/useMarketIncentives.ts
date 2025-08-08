@@ -10,13 +10,15 @@ import { bribeRewardsAbi } from '@ionicprotocol/sdk';
 // Define contract addresses
 export const VOTER_CONTRACT_ADDRESSES = {
   8453: '0x669A6F5421dA53696fa06f1043CF127d380f6EB9', // Base
-  34443: '0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429' // Mode
+  34443: '0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429', // Mode
+  1135: '0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27' // Lisk
 };
 
 // Incentives viewer contract addresses - CORRECT ADDRESSES
-export const INCENTIVES_VIEWER_ADDRESSES = {
-  8453: '0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B', // Base
-  34443: '0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D' // Mode
+export const VOTER_LENS_ADDRESSES = {
+  8453: '0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B' as `0x${string}`, // Base
+  34443: '0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D' as `0x${string}`, // Mode
+  1135: '0x40D2405b39314E6610b04dac3Ebf9A666b167c77' as `0x${string}` // Lisk
 };
 
 // Add iVoterViewAbi
@@ -201,10 +203,7 @@ export const useMarketIncentives = (
 
   // Get incentives viewer address for the chain
   const incentivesViewerAddress = useMemo(
-    () =>
-      INCENTIVES_VIEWER_ADDRESSES[
-        chain as keyof typeof INCENTIVES_VIEWER_ADDRESSES
-      ],
+    () => VOTER_LENS_ADDRESSES[chain as keyof typeof VOTER_LENS_ADDRESSES],
     [chain]
   );
 

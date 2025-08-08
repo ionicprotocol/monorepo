@@ -1,13 +1,17 @@
 import type { ChainId } from '@ui/types/veION';
 import { LpTokenType } from '@ui/types/veION';
 
-export function getTokenType(chainId: ChainId): 'eth' | 'mode' | 'weth' {
+export function getTokenType(
+  chainId: ChainId
+): 'eth' | 'lsk' | 'mode' | 'weth' {
   switch (chainId) {
     case 8453:
       return 'eth';
     case 34443:
       return 'mode';
     case 10:
+      return 'weth';
+    case 1135:
       return 'weth';
     default:
       return 'eth';

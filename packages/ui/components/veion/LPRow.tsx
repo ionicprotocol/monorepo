@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { mode } from 'viem/chains';
+import { lisk, mode } from 'viem/chains';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
@@ -29,7 +29,7 @@ const LPRow = ({
   detail: Detail;
   chain: number;
 }) => {
-  const token2 = chain == mode.id ? 'mode' : 'eth';
+  const token2 = chain == mode.id ? 'mode' : chain == lisk.id ? 'weth' : 'eth';
 
   return (
     <div className="grid grid-cols-6 gap-3 group">

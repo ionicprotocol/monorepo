@@ -6,6 +6,11 @@ import {
   BaseReservesContractAddr
 } from '@ui/constants/baselp';
 import {
+  LiskLiquidityContractAdd,
+  LiskReservesContractAddr,
+  LiskStakingContractAddr
+} from '@ui/constants/liskLp';
+import {
   LiquidityContractAbi,
   ModeLiquidityContractAddress,
   ModeLpAddressPool
@@ -20,7 +25,9 @@ import { StakingContractAddress } from '@ui/constants/staking';
 
 import type { Address } from 'viem';
 
-export function getPoolToken(token?: 'eth' | 'mode' | 'op' | 'weth'): Address {
+export function getPoolToken(
+  token?: 'eth' | 'lsk' | 'mode' | 'op' | 'weth'
+): Address {
   if (token === 'weth') return '0x4200000000000000000000000000000000000006';
   if (token === 'mode') return '0xDfc7C877a950e49D2610114102175A06C2e3167a';
   return '0x0000000000000000000000000000000000000000';
@@ -39,7 +46,7 @@ export function getToken(chain: number): Address {
 
 export function getAvailableStakingToken(
   chain: number,
-  token: 'eth' | 'mode' | 'op' | 'weth'
+  token: 'eth' | 'lsk' | 'mode' | 'op' | 'weth'
 ): Address {
   if (chain === mode.id && (token === 'eth' || token === 'weth'))
     return '0xC6A394952c097004F83d2dfB61715d245A38735a';
@@ -48,12 +55,14 @@ export function getAvailableStakingToken(
     return BaseReservesContractAddr;
   if (chain === optimism.id && (token === 'eth' || token === 'weth'))
     return OPReservesContractAddr;
+  if (chain === lisk.id && token === 'weth') return LiskReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
 export function getTradingContractAddress(chain: number): Address {
   if (chain === mode.id) return ModeTradingContractAddress;
   if (chain === base.id) return BaseReservesContractAddr;
+  if (chain === lisk.id) return LiskReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
@@ -61,12 +70,13 @@ export function getSpenderContract(chain: number): Address {
   if (chain === mode.id) return ModeLiquidityContractAddress;
   if (chain === base.id) return BaseLiquidityContractAdd;
   if (chain === optimism.id) return OPRouterContractAddr;
+  if (chain === lisk.id) return LiskLiquidityContractAdd;
   return '0x0000000000000000000000000000000000000000';
 }
 
 export function getStakingToContract(
   chain: number,
-  token: 'eth' | 'mode' | 'op' | 'weth'
+  token: 'eth' | 'lsk' | 'mode' | 'op' | 'weth'
 ): Address {
   if (chain === mode.id && (token === 'eth' || token === 'weth'))
     return StakingContractAddress;
@@ -74,6 +84,12 @@ export function getStakingToContract(
     return '0x8ff8b21a0736738b25597D32d8f7cf658f39f157';
   if (chain === base.id) return '0x9b42e5F8c45222b2715F804968251c747c588fd7';
   if (chain === optimism.id && token === 'eth') return OPStakingContractAddr;
+  if (
+    chain === lisk.id &&
+    (token === 'eth' || token === 'lsk' || token === 'weth')
+  ) {
+    return LiskStakingContractAddr;
+  }
   return '0x0000000000000000000000000000000000000000';
 }
 
@@ -82,6 +98,7 @@ export function getReservesContract(chain: number): Address {
   if (chain === mode.id) return ModeLiquidityContractAddress;
   if (chain === base.id) return BaseReservesContractAddr;
   if (chain === optimism.id) return OPReservesContractAddr;
+  if (chain === lisk.id) return LiskReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
@@ -104,17 +121,22 @@ export function getReservesABI(chain: number) {
         type: 'function'
       }
     ];
+  } else if (chain === mode.id) {
+    return LiquidityContractAbi;
+  } else if (chain === base.id) {
+    return BaseContractABI;
+  } else if (chain === lisk.id) {
+    return BaseContractABI;
+  } else {
+    return LiquidityContractAbi;
   }
-  if (chain === mode.id) return LiquidityContractAbi;
-  if (chain === base.id) return BaseContractABI;
-  return LiquidityContractAbi;
 }
 
 export function getReservesArgs(
   chain: number,
-  token: 'eth' | 'mode' | 'op' | 'weth'
+  token: 'eth' | 'lsk' | 'mode' | 'op' | 'weth'
 ) {
-  if (chain === optimism.id || chain === base.id) {
+  if (chain === optimism.id || chain === base.id || chain === lisk.id) {
     return [];
   }
 
@@ -124,7 +146,7 @@ export function getReservesArgs(
       return [getToken(chain), getPoolToken('weth'), false];
     }
     if (token === 'mode') {
-      // For MODE/ION pair, pass ion token, mode token address, and false for the reverse flag
+      // For MODE/ION pair
       return [getToken(chain), getPoolToken('mode'), false];
     }
   }
