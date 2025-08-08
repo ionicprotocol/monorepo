@@ -39,6 +39,8 @@ interface IVoter {
   /// @notice Error thrown when the caller is not the governor.
   error NotGovernor();
 
+  error NotDistributor();
+
   /// @notice Error thrown when an NFT is not whitelisted.
   error NotWhitelistedNFT();
 
@@ -440,4 +442,6 @@ interface IVoter {
    * @return A struct containing vote details.
    */
   function getVoteDetails(uint256 _tokenId, address _lpAsset) external view returns (VoteDetails memory);
+
+  function getHistoricalPrice(address _lpToken, uint256 _epochTimestamp) external view returns (uint256);
 }

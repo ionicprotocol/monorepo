@@ -84,7 +84,13 @@ const PoolToggle = ({ chain, pool, hiddenPools = [] }: PoolToggleProps) => {
                     <Globe className="h-4 w-4" />
                   )}
                   <span className="relative whitespace-nowrap">
-                    {isDeprecated ? 'Deprecated' : isNative ? 'Native' : 'Main'}
+                    {isDeprecated
+                      ? 'Deprecated'
+                      : isNative
+                        ? 'Native'
+                        : poolConfig.shortName
+                          ? poolConfig.shortName
+                          : 'Main'}
                   </span>
                 </Link>
               );

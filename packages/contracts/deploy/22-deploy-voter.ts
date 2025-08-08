@@ -2,6 +2,7 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { Address, Hash, Hex } from "viem";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { veIONConfig } from "../chainDeploy";
+import * as readline from "readline";
 
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
 
@@ -23,9 +24,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const veION = await viem.getContractAt("veION", (await deployments.get("veION")).address as Address);
 
-  // ╔══════════════════════════════════════════╗
-  // ║               DEPLOY VOTER               ║
-  // ╚══════════════════════════════════════════╝
+  // // ╔══════════════════════════════════════════╗
+  // // ║               DEPLOY VOTER               ║
+  // // ╚══════════════════════════════════════════╝
   let hash;
   let voter;
   try {
@@ -44,37 +45,52 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       }
     });
     if (voter.transactionHash) await publicClient.waitForTransactionReceipt({ hash: voter.transactionHash as Hash });
-    console.log("voter: ", veION.address);
+    console.log("voter: ", voter.address);
   } catch (error) {
     console.error("Could not deploy:", error);
   }
 
+  const proceedToStep2 = (await askQuestion("Upgraded or deployed Voter. Move to Step 2: Add Markets? (y/n)")) || "";
+  if (proceedToStep2.toLowerCase() !== "y") return;
+
   voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
-  // ╔══════════════════════════════════════════╗
-  // ║               SET LP ARRAY               ║
-  // ║  Configuring which LP tokens are allowed ║
-  // ╚══════════════════════════════════════════╝
-  const owner = (await voter.read.owner()) as Address;
-  if (veParams.lpTokens.length > 0) {
-    if (owner.toLowerCase() !== deployer.toLowerCase()) {
-      await prepareAndLogTransaction({
-        contractInstance: voter,
-        functionName: "setLpTokens",
-        args: [veParams.lpTokens],
-        description: "Set LP Tokens",
-        inputs: [{ internalType: "address[]", name: "_lpTokens", type: "address[]" }]
-      });
+  try {
+    const txHash = await voter.write.setGovernor(["0x7d922bf0975424b3371074f54cC784AF738Dac0D"]);
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+    if (receipt.status === "success") {
+      console.log(`Successfully set governor. Transaction hash: ${txHash}`);
     } else {
-      hash = await voter.write.setLpTokens([veParams.lpTokens]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
-      if (receipt.status === "success") {
-        console.log(`Successfully set LP Tokens to: ${veParams.lpTokens}`);
-      } else {
-        console.error(`Transaction ${hash} failed: ${receipt.status}`);
-      }
+      console.error(`Failed to set governor. Transaction hash: ${txHash}, Status: ${receipt.status}`);
     }
+  } catch (error) {
+    console.error("Error setting governor:", error);
   }
+
+  // // ╔══════════════════════════════════════════╗
+  // // ║               SET LP ARRAY               ║
+  // // ║  Configuring which LP tokens are allowed ║
+  // // ╚══════════════════════════════════════════╝
+  // const owner = (await voter.read.owner()) as Address;
+  // if (veParams.lpTokens.length > 0) {
+  //   if (owner.toLowerCase() !== deployer.toLowerCase()) {
+  //     await prepareAndLogTransaction({
+  //       contractInstance: voter,
+  //       functionName: "setLpTokens",
+  //       args: [veParams.lpTokens],
+  //       description: "Set LP Tokens",
+  //       inputs: [{ internalType: "address[]", name: "_lpTokens", type: "address[]" }]
+  //     });
+  //   } else {
+  //     hash = await voter.write.setLpTokens([veParams.lpTokens]);
+  //     const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  //     if (receipt.status === "success") {
+  //       console.log(`Successfully set LP Tokens to: ${veParams.lpTokens}`);
+  //     } else {
+  //       console.error(`Transaction ${hash} failed: ${receipt.status}`);
+  //     }
+  //   }
+  // }
 
   const poolDirectory = await viem.getContractAt(
     "PoolDirectory",
@@ -86,7 +102,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║               ADD MARKETS                ║
   // ║  Configuring which LP tokens are allowed ║
   // ╚══════════════════════════════════════════╝
-  const allMarkets: { marketAddress: Address; side: number }[] = [];
+  const marketsLength = await voter.read.marketsLength();
+  const marketAlreadyAdded: { marketAddress: Address; side: number }[] = [];
+  for (let i = 0; i < marketsLength; i++) {
+    const market = await voter.read.markets([BigInt(i)]);
+    marketAlreadyAdded.push({ marketAddress: market[0], side: market[1] });
+  }
+  const marketAlreadyAddedAddresses = marketAlreadyAdded.map((market) => market.marketAddress);
+  console.log(marketAlreadyAddedAddresses);
+
+  const marketsNotYetAdded: { marketAddress: Address; side: number }[] = [];
   const [, pools] = await poolDirectory.read.getActivePools();
   for (let i = 0; i < pools.length; i++) {
     const pool = pools[i];
@@ -95,20 +120,26 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       const markets = await comptroller.read.getAllMarkets();
       console.log(`Setting up ${markets.length} Markets`);
       for (const market of markets) {
-        allMarkets.push({ marketAddress: market, side: 0 });
-        allMarkets.push({ marketAddress: market, side: 1 });
-        console.log(`Setting up ${market}`);
+        if (!marketAlreadyAddedAddresses.includes(market)) {
+          marketsNotYetAdded.push({ marketAddress: market, side: 0 });
+          marketsNotYetAdded.push({ marketAddress: market, side: 1 });
+          console.log(`Setting up ${market}`);
+        }
       }
     } catch (error) {
       console.error(`Error processing pool ${pool.name}:`, error);
     }
   }
 
+  console.log("Markets not yet added:", marketsNotYetAdded);
+  const proceedToStep3 = (await askQuestion("Prepared markets to add. Move to Step 3: Add Markets? (y/n)")) || "";
+  if (proceedToStep3.toLowerCase() !== "y") return;
+
   try {
-    hash = await voter.write.addMarkets([allMarkets]);
+    hash = await voter.write.addMarkets([marketsNotYetAdded]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status === "success") {
-      console.log(`Successfully set markets for: ${allMarkets}`);
+      console.log(`Successfully set markets for: ${marketsNotYetAdded}`);
     } else {
       console.error(`Transaction ${hash} failed: ${receipt.status}`);
     }
@@ -116,10 +147,36 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     console.error(`Error adding markets ${error}`);
   }
 
-  // ╔══════════════════════════════════════════╗
-  // ║     DEPLOY REWARD ACCUMULATORS           ║
-  // ║  AND SET THEM IN THE VOTER CONTRACT      ║
-  // ╚══════════════════════════════════════════╝
+  const proceedToStep4 = (await askQuestion("Markets added. Move to Step 4: Reward Accumulators? (y/n)")) || "";
+  if (proceedToStep4.toLowerCase() !== "y") return;
+
+  const allMarkets: { marketAddress: Address; side: number }[] = [...marketAlreadyAdded, ...marketsNotYetAdded];
+  console.log("All Markets:", allMarkets);
+
+  const marketsWithoutRewardAccumulator: { marketAddress: Address; side: number }[] = [];
+  for (const market of allMarkets) {
+    try {
+      const rewardAccumulatorAddress = await voter.read.marketToRewardAccumulators([market.marketAddress, 0]);
+      if (rewardAccumulatorAddress === "0x0000000000000000000000000000000000000000") {
+        marketsWithoutRewardAccumulator.push(market);
+      }
+    } catch (error) {
+      console.error(`Error querying reward accumulator for market ${market.marketAddress}:`, error);
+    }
+  }
+
+  console.log("Markets without accumulators", marketsWithoutRewardAccumulator);
+
+  const proceedToStep5 =
+    (await askQuestion(
+      "Found markets without reward accumulators. Move to step 5 Deploy and set reward accumulators? (y/n)"
+    )) || "";
+  if (proceedToStep5.toLowerCase() !== "y") return;
+
+  // // ╔══════════════════════════════════════════╗
+  // // ║     DEPLOY REWARD ACCUMULATORS           ║
+  // // ║  AND SET THEM IN THE VOTER CONTRACT      ║
+  // // ╚══════════════════════════════════════════╝
 
   const rewardAccumulators: Address[] = [];
   const marketAddresses: Address[] = [];
@@ -151,7 +208,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         await publicClient.waitForTransactionReceipt({ hash: rewardAccumulatorDeployment.transactionHash as Hash });
       }
       console.log(
-        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${allMarkets.length}`
+        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${marketsWithoutRewardAccumulator.length}`
       );
 
       // Collect data for setMarketRewardAccumulators
@@ -166,15 +223,41 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     }
   }
 
+  const proceedToStep6 =
+    (await askQuestion("Deployed Accumulators. Move to step 6 Deploy and set Bribes? (y/n)")) || "";
+  if (proceedToStep6.toLowerCase() !== "y") return;
+
   // Call setMarketRewardAccumulators in the IVoter contract
-  try {
-    const txHash = await voter.write.setMarketRewardAccumulators([marketAddresses, marketSides, rewardAccumulators]);
-    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(
-      `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
-    );
-  } catch (error) {
-    console.error("Error setting market reward accumulators:", error);
+
+  for (let i = 0; i < marketAddresses.length; i++) {
+    const existingAccumulator = await voter.read.marketToRewardAccumulators([marketAddresses[i], marketSides[i]]);
+
+    if (existingAccumulator === "0x0000000000000000000000000000000000000000") {
+      const confirmTx = await askQuestion(
+        `About to set market reward accumulators for market: ${marketAddresses[i]}, side: ${marketSides[i]}. Proceed? (y/n)`
+      );
+      if (confirmTx.toLowerCase() !== "y") {
+        console.log(
+          `Skipped setting market reward accumulators for market: ${marketAddresses[i]}, side: ${marketSides[i]}`
+        );
+        continue;
+      }
+      try {
+        const txHash = await voter.write.setMarketRewardAccumulators([
+          [marketAddresses[i]],
+          [marketSides[i]],
+          [rewardAccumulators[i]]
+        ]);
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+        console.log(
+          `Successfully set market reward accumulators ${marketAddresses[i]}, ${marketSides[i]}, ${rewardAccumulators[i]}`
+        );
+      } catch (error) {
+        console.error("Error setting market reward accumulators:", error);
+      }
+    } else {
+      console.log(`Market reward accumulator already set for market: ${marketAddresses[i]}, side: ${marketSides[i]}`);
+    }
   }
 
   // ╔══════════════════════════════════════════╗
@@ -217,83 +300,114 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     }
   }
 
-  try {
-    const txHash = await voter.write.setBribes([rewardAccumulators, bribes]);
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
-  } catch (error) {
-    console.error("Error setting bribes in Voter contract:", error);
-  }
+  for (let i = 0; i < rewardAccumulators.length; i++) {
+    let bribe = await voter.read.rewardAccumulatorToBribe([rewardAccumulators[i]]);
 
-  // ╔══════════════════════════════════════════╗
-  // ║           SET MAX VOTING NUM             ║
-  // ╚══════════════════════════════════════════╝
-  try {
-    const txHash = await voter.write.setMaxVotingNum([BigInt(veParams.maxVotingNum!)]);
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set max voting number to: ${veParams.maxVotingNum}`);
-  } catch (error) {
-    console.error("Error setting max voting number:", error);
-  }
-
-  const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
-
-  // ╔══════════════════════════════════════════╗
-  // ║           SET VOTER ON VEION             ║
-  // ╚══════════════════════════════════════════╝
-  try {
-    const txHash = await IveION.write.setVoter([voter.address]);
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set voter: ${voter.address}`);
-  } catch (error) {
-    console.error("Error setting voter:", error);
-  }
-
-  // ╔══════════════════════════════════════════╗
-  // ║           DEPLOY VOTER LENS              ║
-  // ╚══════════════════════════════════════════╝
-  let voterLens;
-  try {
-    voterLens = await deployments.deploy("VoterLens", {
-      from: deployer,
-      log: true,
-      proxy: {
-        proxyContract: "OpenZeppelinTransparentProxy",
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [voter.address, (await deployments.get("PoolDirectory")).address]
-          }
-        }
+    if (bribe === "0x0000000000000000000000000000000000000000") {
+      const userConfirmed = await askQuestion(
+        `Do you want to set bribes for RewardAccumulator: ${rewardAccumulators[i]} with Bribe: ${bribes[i]}?`
+      );
+      if (!userConfirmed) {
+        console.log(`User canceled the transaction for RewardAccumulator: ${rewardAccumulators[i]}`);
+        continue;
       }
-    });
-
-    if (voterLens.transactionHash) {
-      await publicClient.waitForTransactionReceipt({ hash: voterLens.transactionHash as Hash });
+      try {
+        const txHash = await voter.write.setBribes([[rewardAccumulators[i]], [bribes[i]]]);
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators[i]}, ${bribes[i]}`);
+      } catch (error) {
+        console.error("Error setting bribes in Voter contract:", error);
+      }
+    } else {
+      console.log(
+        `Bribe contract already set for accumulator: ${marketAddresses[i]}, side: ${marketSides[i]}, ${rewardAccumulators[i]}`
+      );
     }
-    console.log(`VoterLens deployed at: ${voterLens.address}`);
-  } catch (error) {
-    console.error("Error deploying VoterLens:", error);
   }
 
-  voterLens = await viem.getContractAt("VoterLens", (await deployments.get("VoterLens")).address as Address);
+  // // ╔══════════════════════════════════════════╗
+  // // ║           SET MAX VOTING NUM             ║
+  // // ╚══════════════════════════════════════════╝
+  // try {
+  //   const txHash = await voter.write.setMaxVotingNum([BigInt(veParams.maxVotingNum!)]);
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set max voting number to: ${veParams.maxVotingNum}`);
+  // } catch (error) {
+  //   console.error("Error setting max voting number:", error);
+  // }
 
-  try {
-    const txHash = await voterLens.write.setMasterPriceOracle([mpo.address]);
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set mpo to ${mpo.address}`);
-  } catch (error) {
-    console.error("Error setting max voting number:", error);
-  }
+  // const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
 
-  try {
-    const txHash = await voterLens.write.setVeIONAddress([veION.address], { from: deployer });
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set ve to ${veION.address}`);
-  } catch (error) {
-    console.error("Error setting max voting number:", error);
-  }
+  // // ╔══════════════════════════════════════════╗
+  // // ║           SET VOTER ON VEION             ║
+  // // ╚══════════════════════════════════════════╝
+  // try {
+  //   const txHash = await IveION.write.setVoter([voter.address]);
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set voter: ${voter.address}`);
+  // } catch (error) {
+  //   console.error("Error setting voter:", error);
+  // }
+
+  // // ╔══════════════════════════════════════════╗
+  // // ║           DEPLOY VOTER LENS              ║
+  // // ╚══════════════════════════════════════════╝
+  // let voterLens;
+  // try {
+  //   voterLens = await deployments.deploy("VoterLens", {
+  //     from: deployer,
+  //     log: true,
+  //     proxy: {
+  //       proxyContract: "OpenZeppelinTransparentProxy",
+  //       execute: {
+  //         init: {
+  //           methodName: "initialize",
+  //           args: [voter.address, (await deployments.get("PoolDirectory")).address]
+  //         }
+  //       }
+  //     }
+  //   });
+
+  //   if (voterLens.transactionHash) {
+  //     ~~(await publicClient.waitForTransactionReceipt({ hash: voterLens.transactionHash as Hash }));
+  //   }
+  //   console.log(`VoterLens deployed at: ${voterLens.address}`);
+  // } catch (error) {
+  //   console.error("Error deploying VoterLens:", error);
+  // }
+
+  // voterLens = await viem.getContractAt("VoterLens", (await deployments.get("VoterLens")).address as Address);
+
+  // try {
+  //   const txHash = await voterLens.write.setMasterPriceOracle([mpo.address]);
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set mpo to ${mpo.address}`);
+  // } catch (error) {
+  //   console.error("Error setting max voting number:", error);
+  // }
+
+  // try {
+  //   const txHash = await voterLens.write.setVeIONAddress([veION.address], { from: deployer });
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set ve to ${veION.address}`);
+  // } catch (error) {
+  //   console.error("Error setting max voting number:", error);
+  // }
 };
+
+function askQuestion(query: string): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve) =>
+    rl.question(query, (ans: string) => {
+      rl.close();
+      resolve(ans);
+    })
+  );
+}
 
 func.tags = ["prod", "veion", "voter"];
 

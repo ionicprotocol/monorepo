@@ -19,11 +19,6 @@ const accounts = [
   return this.toString();
 };
 
-subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS).setAction(async (_, __, runSuper) => {
-  const paths = await runSuper();
-  return paths.filter((p: string) => !p.endsWith(".t.sol"));
-});
-
 const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: { default: 0 },

@@ -12,9 +12,11 @@ evm_version = 'shanghai'
 [rpc_endpoints]
 mode = "${MODE_MAINNET_RPC_URL}"
 base = "${BASE_MAINNET_RPC_URL}"
+lisk = "${LISK_MAINNET_RPC_URL}"
 
 mode_archive = "${MODE_MAINNET_ARCHIVE_RPC_URL}"
 base_archive = "${BASE_MAINNET_ARCHIVE_RPC_URL}"
+lisk_archive = "${LISK_MAINNET_ARCHIVE_RPC_URL}"
 
 # See more config options https://github.com/gakonst/foundry/tree/master/config
 
