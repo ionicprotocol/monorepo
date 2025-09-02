@@ -15,8 +15,8 @@ import {
   CircleDollarSign,
   Loader2
 } from 'lucide-react';
-import { erc20Abi, isAddress } from 'viem';
-import { useAccount, useReadContract, useSwitchChain } from 'wagmi';
+import { erc20Abi, isAddress, formatUnits } from 'viem';
+import { useAccount, useReadContract, useSwitchChain, useBalance } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 
 import { Button } from '@ui/components/ui/button';
@@ -53,7 +53,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   const chainId = parseInt(currentChain);
   const poolId = currentChain === mode.id.toString() ? '1' : '0';
 
-  const { chain } = useAccount();
+  const { chain, address } = useAccount();
   const { switchChain, isPending: isSwitchingNetwork } = useSwitchChain();
   const isWrongNetwork = chain?.id !== chainId;
 
@@ -82,12 +82,110 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     marketAddresses
   );
 
+  // Define default token addresses
+  const defaultTokenAddresses = useMemo(
+    () => ({
+      USDC:
+        chainId === 8453
+          ? '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+          : '0xd988097fb8612cc24eeC14542bC03424c656005f',
+      WETH:
+        chainId === 8453
+          ? '0x4200000000000000000000000000000000000006'
+          : '0x4200000000000000000000000000000000000006',
+      ION:
+        chainId === 8453
+          ? '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5'
+          : '0x18470019bf0e94611f15852f7e93cf5d65bc34ca'
+    }),
+    [chainId]
+  );
+
+  // Fetch balances for default tokens
+  const { data: usdcBalance } = useBalance({
+    address,
+    token: defaultTokenAddresses.USDC as `0x${string}`,
+    chainId,
+    query: { enabled: !!address }
+  });
+
+  const { data: wethBalance } = useBalance({
+    address,
+    token: defaultTokenAddresses.WETH as `0x${string}`,
+    chainId,
+    query: { enabled: !!address }
+  });
+
+  const { data: ionBalance, error: ionBalanceError } = useBalance({
+    address,
+    token: defaultTokenAddresses.ION as `0x${string}`,
+    chainId,
+    query: { enabled: !!address }
+  });
+
+  // Debug ION balance fetching
+  useEffect(() => {
+    console.log('=== ION BALANCE DEBUG ===');
+    console.log('Chain ID:', chainId);
+    console.log('ION Address:', defaultTokenAddresses.ION);
+    console.log('User Address:', address);
+    console.log('ION Balance Data:', ionBalance);
+    console.log('ION Balance Error:', ionBalanceError);
+    console.log('=== END ION DEBUG ===');
+  }, [
+    chainId,
+    defaultTokenAddresses.ION,
+    address,
+    ionBalance,
+    ionBalanceError
+  ]);
+
+  // Default reward tokens that are always available
+  const defaultRewardTokens: RewardTokenInfo[] = useMemo(
+    () => [
+      {
+        symbol: 'USDC',
+        address: defaultTokenAddresses.USDC,
+        balance: usdcBalance
+          ? formatUnits(usdcBalance.value, usdcBalance.decimals)
+          : '0',
+        name: 'USD Coin',
+        cgId: 'usd-coin',
+        decimals: 6,
+        underlying_address: defaultTokenAddresses.USDC
+      },
+      {
+        symbol: 'WETH',
+        address: defaultTokenAddresses.WETH,
+        balance: wethBalance
+          ? formatUnits(wethBalance.value, wethBalance.decimals)
+          : '0',
+        name: 'Wrapped Ether',
+        cgId: 'weth',
+        decimals: 18,
+        underlying_address: defaultTokenAddresses.WETH
+      },
+      {
+        symbol: 'ION',
+        address: defaultTokenAddresses.ION,
+        balance: ionBalance
+          ? formatUnits(ionBalance.value, ionBalance.decimals)
+          : '0',
+        name: 'Ionic Protocol',
+        cgId: 'ionic-protocol',
+        decimals: 18,
+        underlying_address: defaultTokenAddresses.ION
+      }
+    ],
+    [defaultTokenAddresses, usdcBalance, wethBalance, ionBalance]
+  );
+
   // Update the useMarketIncentives hook usage to include getMarketIncentivesUsd
   const {
     getMarketIncentives,
     getMarketIncentivesUsd,
     getBribeAddress,
-    rewardTokensInfo,
+    rewardTokensInfo: hookRewardTokens,
     isLoading: isIncentivesLoading,
     fetchRewardTokensForBribe
   } = useMarketIncentives(
@@ -96,6 +194,63 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     selectedSide,
     selectedMarket
   );
+
+  // Always ensure default tokens are available, supplement with hook tokens
+  const rewardTokensInfo = useMemo(() => {
+    // Always start with our default tokens
+    let finalTokens = [...defaultRewardTokens];
+
+    // Debug logging
+    console.log('=== TOKEN DEBUG ===');
+    console.log('Default tokens count:', defaultRewardTokens.length);
+    console.log(
+      'Default tokens:',
+      defaultRewardTokens.map((t) => `${t.symbol} (${t.balance})`)
+    );
+    console.log('Hook tokens count:', hookRewardTokens.length);
+    console.log(
+      'Hook tokens:',
+      hookRewardTokens.map((t) => `${t.symbol} (${t.balance})`)
+    );
+
+    // Only merge if hook has tokens, otherwise stick with defaults
+    if (hookRewardTokens.length > 0) {
+      const combinedTokens = [...defaultRewardTokens];
+
+      // Add additional tokens from the hook (e.g., EUSD)
+      hookRewardTokens.forEach((hookToken) => {
+        const existingIndex = combinedTokens.findIndex(
+          (token) =>
+            token.address.toLowerCase() === hookToken.address.toLowerCase()
+        );
+
+        if (existingIndex >= 0) {
+          // Update existing token with hook balance data, but preserve our token metadata
+          combinedTokens[existingIndex] = {
+            ...combinedTokens[existingIndex],
+            balance:
+              hookToken.balance && hookToken.balance !== '0'
+                ? hookToken.balance
+                : combinedTokens[existingIndex].balance
+          };
+        } else {
+          // Add new token from hook (like EUSD)
+          combinedTokens.push(hookToken);
+        }
+      });
+
+      finalTokens = combinedTokens;
+    }
+
+    console.log('Final tokens count:', finalTokens.length);
+    console.log(
+      'Final tokens:',
+      finalTokens.map((t) => `${t.symbol} (${t.balance})`)
+    );
+    console.log('=== END DEBUG ===');
+
+    return finalTokens;
+  }, [defaultRewardTokens, hookRewardTokens]);
 
   // Incentive submission hook
   const {
@@ -440,124 +595,49 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
               </SelectContent>
             </Select>
 
-            {isIncentivesLoading ? (
-              <div className="relative p-6 border border-white/10 rounded-md bg-grayone animate-pulse">
-                <div className="flex items-center justify-center space-x-2">
-                  <Loader2
-                    size={20}
-                    className="text-accent animate-spin"
-                  />
-                  <div className="text-center text-white/60 text-sm">
-                    Loading reward tokens...
-                  </div>
-                </div>
-              </div>
-            ) : rewardTokensInfo.length === 0 ? (
-              <div className="p-6 border border-white/10 rounded-md bg-grayone/80">
+            <MaxDeposit
+              key={maxDepositKey}
+              headerText="Incentivize Amount"
+              tokenName={selectedToken?.symbol}
+              tokenSelector={true}
+              tokenArr={rewardTokensInfo.map((token) => token.symbol)}
+              max={selectedToken?.balance || '0'}
+              chain={+currentChain}
+              handleInput={(val?: string) => handleInput(val || '')}
+              onTokenChange={handleTokenChange}
+              showUtilizationSlider
+              amount={incentiveAmount}
+            />
+
+            <Button
+              className="w-full bg-accent hover:bg-accent/90 text-black font-semibold relative overflow-hidden transition-all duration-300"
+              disabled={isApproving || isSubmitting || isConfirming}
+              onClick={handleSubmit}
+            >
+              {isApproving || isSubmitting || isConfirming ? (
                 <div className="flex items-center justify-center">
-                  <Info
-                    size={20}
-                    className="text-yellow-400 mr-2"
+                  <Loader2
+                    size={18}
+                    className="mr-2 animate-spin"
                   />
-                  <span className="text-white/80 font-medium">
-                    No Reward Tokens Available
+                  <span>
+                    {isApproving
+                      ? 'Approving tokens...'
+                      : isSubmitting
+                        ? 'Submitting incentive...'
+                        : 'Confirming transaction...'}
                   </span>
                 </div>
-                <p className="mt-2 text-center text-white/60 text-sm">
-                  There are currently no tokens available for incentives. Please
-                  check back later or contact the Ionic team.
-                </p>
-              </div>
-            ) : (
-              <MaxDeposit
-                key={maxDepositKey}
-                headerText="Incentivize Amount"
-                tokenName={selectedToken?.symbol}
-                tokenSelector={true}
-                tokenArr={rewardTokensInfo.map((token) => token.symbol)}
-                max={selectedToken?.balance || '0'}
-                chain={+currentChain}
-                handleInput={(val?: string) => handleInput(val || '')}
-                onTokenChange={handleTokenChange}
-                showUtilizationSlider
-                amount={incentiveAmount}
-              />
-            )}
-
-            {isWrongNetwork ? (
-              // Show network switch button when on wrong network
-              <Button
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold relative overflow-hidden transition-all duration-300"
-                disabled={isSwitchingNetwork}
-                onClick={() => switchChain({ chainId })}
-              >
-                {isSwitchingNetwork ? (
-                  <div className="flex items-center justify-center">
-                    <Loader2
-                      size={18}
-                      className="mr-2 animate-spin"
-                    />
-                    <span>
-                      Switching to {chainId === 8453 ? 'Base' : 'Mode'}{' '}
-                      network...
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="mr-2"
-                    >
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
-                    <span>
-                      Switch to {chainId === 8453 ? 'Base' : 'Mode'} Network
-                      First
-                    </span>
-                  </div>
-                )}
-              </Button>
-            ) : (
-              // Show incentivize button when on correct network
-              <Button
-                className="w-full bg-accent hover:bg-accent/90 text-black font-semibold relative overflow-hidden transition-all duration-300"
-                disabled={
-                  !isFormComplete || isLoading || rewardTokensInfo.length === 0
-                }
-                onClick={handleSubmit}
-              >
-                {isApproving || isSubmitting || isConfirming ? (
-                  <div className="flex items-center justify-center">
-                    <Loader2
-                      size={18}
-                      className="mr-2 animate-spin"
-                    />
-                    <span>
-                      {isApproving
-                        ? 'Approving tokens...'
-                        : isSubmitting
-                          ? 'Submitting incentive...'
-                          : 'Confirming transaction...'}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <CircleDollarSign
-                      size={18}
-                      className="mr-2"
-                    />
-                    <span>Incentivize</span>
-                  </div>
-                )}
-              </Button>
-            )}
+              ) : (
+                <div className="flex items-center justify-center">
+                  <CircleDollarSign
+                    size={18}
+                    className="mr-2"
+                  />
+                  <span>Incentivize</span>
+                </div>
+              )}
+            </Button>
           </div>
 
           {selectedMarket && selectedMarketData ? (
