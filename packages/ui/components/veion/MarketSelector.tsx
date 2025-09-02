@@ -57,11 +57,9 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   const { switchChain, isPending: isSwitchingNetwork } = useSwitchChain();
   const isWrongNetwork = chain?.id !== chainId;
 
-  // Get market data
   const { marketData: rawMarketData, isLoading: isMarketDataLoading } =
     useMarketData(poolId, currentChain);
 
-  // State variables
   const [selectedMarket, setSelectedMarket] = useState<string>('');
   const [selectedSide, setSelectedSide] = useState<'' | 'borrow' | 'supply'>(
     ''
@@ -70,19 +68,16 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   const [incentiveAmount, setIncentiveAmount] = useState<string>('');
   const [maxDepositKey, setMaxDepositKey] = useState<number>(0);
 
-  // Extract all market addresses from raw market data
   const marketAddresses = useMemo(() => {
     if (!rawMarketData || !rawMarketData.length) return [];
     return rawMarketData.map((market) => market.cTokenAddress);
   }, [rawMarketData]);
 
-  // Get votes data for all markets
   const { getMarketVotes, isLoading: isVotesLoading } = useMarketVotes(
     chainId,
     marketAddresses
   );
 
-  // Define default token addresses
   const defaultTokenAddresses = useMemo(
     () => ({
       USDC:
@@ -101,7 +96,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     [chainId]
   );
 
-  // Fetch balances for default tokens
   const { data: usdcBalance } = useBalance({
     address,
     token: defaultTokenAddresses.USDC as `0x${string}`,
@@ -123,24 +117,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     query: { enabled: !!address }
   });
 
-  // Debug ION balance fetching
-  useEffect(() => {
-    console.log('=== ION BALANCE DEBUG ===');
-    console.log('Chain ID:', chainId);
-    console.log('ION Address:', defaultTokenAddresses.ION);
-    console.log('User Address:', address);
-    console.log('ION Balance Data:', ionBalance);
-    console.log('ION Balance Error:', ionBalanceError);
-    console.log('=== END ION DEBUG ===');
-  }, [
-    chainId,
-    defaultTokenAddresses.ION,
-    address,
-    ionBalance,
-    ionBalanceError
-  ]);
-
-  // Default reward tokens that are always available
   const defaultRewardTokens: RewardTokenInfo[] = useMemo(
     () => [
       {
@@ -180,7 +156,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     [defaultTokenAddresses, usdcBalance, wethBalance, ionBalance]
   );
 
-  // Update the useMarketIncentives hook usage to include getMarketIncentivesUsd
   const {
     getMarketIncentives,
     getMarketIncentivesUsd,
@@ -195,29 +170,12 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     selectedMarket
   );
 
-  // Always ensure default tokens are available, supplement with hook tokens
   const rewardTokensInfo = useMemo(() => {
-    // Always start with our default tokens
     let finalTokens = [...defaultRewardTokens];
 
-    // Debug logging
-    console.log('=== TOKEN DEBUG ===');
-    console.log('Default tokens count:', defaultRewardTokens.length);
-    console.log(
-      'Default tokens:',
-      defaultRewardTokens.map((t) => `${t.symbol} (${t.balance})`)
-    );
-    console.log('Hook tokens count:', hookRewardTokens.length);
-    console.log(
-      'Hook tokens:',
-      hookRewardTokens.map((t) => `${t.symbol} (${t.balance})`)
-    );
-
-    // Only merge if hook has tokens, otherwise stick with defaults
     if (hookRewardTokens.length > 0) {
       const combinedTokens = [...defaultRewardTokens];
 
-      // Add additional tokens from the hook (e.g., EUSD)
       hookRewardTokens.forEach((hookToken) => {
         const existingIndex = combinedTokens.findIndex(
           (token) =>
@@ -225,7 +183,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
         );
 
         if (existingIndex >= 0) {
-          // Update existing token with hook balance data, but preserve our token metadata
           combinedTokens[existingIndex] = {
             ...combinedTokens[existingIndex],
             balance:
@@ -234,7 +191,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                 : combinedTokens[existingIndex].balance
           };
         } else {
-          // Add new token from hook (like EUSD)
           combinedTokens.push(hookToken);
         }
       });
@@ -242,17 +198,9 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
       finalTokens = combinedTokens;
     }
 
-    console.log('Final tokens count:', finalTokens.length);
-    console.log(
-      'Final tokens:',
-      finalTokens.map((t) => `${t.symbol} (${t.balance})`)
-    );
-    console.log('=== END DEBUG ===');
-
     return finalTokens;
   }, [defaultRewardTokens, hookRewardTokens]);
 
-  // Incentive submission hook
   const {
     submitIncentive,
     isApproving,
@@ -261,20 +209,17 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     error: submissionError
   } = useIncentiveSubmission();
 
-  // Transform raw market data to include votes, incentives and USD values
   const marketData = useMemo(() => {
     if (!rawMarketData) return [];
 
     return rawMarketData.map((market) => {
       const marketAddress = market.cTokenAddress;
 
-      // Get votes and incentives data
       const supplyVotes = getMarketVotes(marketAddress, 'supply');
       const borrowVotes = getMarketVotes(marketAddress, 'borrow');
       const supplyIncentives = getMarketIncentives(marketAddress, 'supply');
       const borrowIncentives = getMarketIncentives(marketAddress, 'borrow');
 
-      // Get incentives USD values
       const supplyIncentivesUsd = getMarketIncentivesUsd(
         marketAddress,
         'supply'
@@ -321,7 +266,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     getMarketIncentivesUsd
   ]);
 
-  // Market options for dropdown
   const marketOptions = useMemo(() => {
     if (!marketData) return [];
     return marketData.map((market) => ({
@@ -332,14 +276,12 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     }));
   }, [marketData]);
 
-  // Selected market data
   const selectedMarketData = useMemo(() => {
     return marketData?.find(
       (market) => market.cTokenAddress === selectedMarket
     );
   }, [marketData, selectedMarket]);
 
-  // Handle token selection change
   const handleTokenChange = (token: string) => {
     const tokenInfo = rewardTokensInfo.find((t) => t.symbol === token);
     if (tokenInfo) {
@@ -347,30 +289,24 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     }
   };
 
-  // Update the side selection handler
   const handleSideChange = (value: string) => {
     const newSide = value as 'borrow' | 'supply';
     setSelectedSide(newSide);
-    // Reset token when side changes
     setSelectedToken(undefined);
     setIncentiveAmount('');
   };
 
-  // Update the market selection handler
   const handleMarketChange = (value: string) => {
     setSelectedMarket(value);
-    // Reset side, token, and amount when market changes
     setSelectedSide('');
     setSelectedToken(undefined);
     setIncentiveAmount('');
   };
 
-  // Handle incentive amount input
   const handleInput = (val: string) => {
     setIncentiveAmount(val);
   };
 
-  // Handle form submission
   const { data: tokenDecimals } = useReadContract({
     address: selectedToken?.address as `0x${string}`,
     abi: erc20Abi,
@@ -423,7 +359,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
       return;
     }
 
-    // Get the bribe address for the selected market and side
     const bribeAddress = getBribeAddress(
       selectedMarket,
       selectedSide
@@ -438,13 +373,11 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
       return;
     }
 
-    // Start the process
     toast({
       title: 'Processing',
       description: 'Starting incentive submission process...'
     });
 
-    // Send the incentive - network switching will happen first if needed
     const result = await submitIncentive({
       bribeAddress,
       tokenAddress: selectedToken.address as `0x${string}`,
@@ -466,7 +399,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
         variant: 'destructive'
       });
 
-      // If network switching failed, show additional guidance
       if (result.error?.includes('network')) {
         toast({
           title: 'Network Error',
@@ -490,7 +422,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     }
   }, [rewardTokensInfo, selectedToken]);
 
-  // Custom formatter for USD values
   const formatUsd = (value: number) => {
     if (!value || value === 0) return '$0.00';
     if (value < 0.01) return '<$0.01';
@@ -642,8 +573,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
 
           {selectedMarket && selectedMarketData ? (
             <div className="space-y-4">
-              {/* Market Balances table remains the same... */}
-
               <div className="bg-black/30 rounded-md p-3 space-y-2">
                 <h3 className="text-sm font-medium text-white/80 flex items-center gap-2">
                   <LineChart
@@ -691,7 +620,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                             })}
                           </span>
                         </td>
-                        {/* Updated incentives cell with USD value */}
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <div className="flex flex-col">
                             <span className="text-purple-400 font-medium">
@@ -730,7 +658,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                             })}
                           </span>
                         </td>
-                        {/* Updated incentives cell with USD value */}
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <div className="flex flex-col">
                             <span className="text-purple-400 font-medium">
