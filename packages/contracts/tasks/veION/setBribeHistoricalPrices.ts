@@ -442,6 +442,52 @@ task("voter:checkRewards", "set historical prices over a range on Voter contract
   }
 );
 
+task("bribe:notifyReward", "Notify reward amount on BribeRewards contract").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+    const { deployer } = await getNamedAccounts();
+
+    // First approve the BribeRewards contract to spend tokens
+    const tokenContract = await viem.getContractAt(
+      "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+      "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5"
+    );
+
+    const rewardAmount = BigInt("1000000000000000000"); // 1 token in wei
+    const bribeRewardsAddress = "0xe9b889c8c7A5Bbe63e5E2eEafb212cdcF1A60B9f";
+
+    console.log(`Approving BribeRewards contract to spend ${formatEther(rewardAmount)} tokens`);
+    const approveTx = await tokenContract.write.approve([bribeRewardsAddress, rewardAmount]);
+    console.log(`Approval transaction sent: ${approveTx}`);
+    const approveReceipt = await publicClient.waitForTransactionReceipt({ hash: approveTx });
+    console.log(`✅ Successfully approved BribeRewards contract:`, approveReceipt.transactionHash);
+
+    const bribeRewards = await viem.getContractAt("BribeRewards", "0xe9b889c8c7A5Bbe63e5E2eEafb212cdcF1A60B9f");
+
+    // Example token address and amount - adjust these as needed
+    const tokenAddress = "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5";
+
+    console.log(`Notifying reward amount for token: ${tokenAddress}`);
+    console.log(`Reward amount: ${formatEther(rewardAmount)}`);
+
+    const userResponse = await new Promise((resolve) => {
+      process.stdout.write("Do you want to continue with notifying the reward? (yes/no): ");
+      process.stdin.once("data", (data) => resolve(data.toString().trim()));
+    });
+
+    if (userResponse.toLowerCase() !== "yes") {
+      console.log("Operation cancelled by user.");
+      return;
+    }
+
+    console.log("Sending transaction to notify reward amount on BribeRewards contract");
+    const tx = await bribeRewards.write.notifyRewardAmount([tokenAddress, rewardAmount]);
+    console.log(`Transaction sent: ${tx}`);
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: tx });
+    console.log(`✅ Successfully notified reward amount on BribeRewards contract:`, receipt.transactionHash);
+  }
+);
+
 task("voter:distribute", "set historical prices over a range on Voter contract").setAction(
   async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
     const publicClient = await viem.getPublicClient();
