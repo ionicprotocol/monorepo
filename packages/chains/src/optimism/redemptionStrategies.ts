@@ -43,16 +43,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     strategy: RedemptionStrategyContract.UniswapV3LiquidatorFunder,
     outputToken: underlying(assets, assetSymbols.wstETH)
   },
-  {
-    inputToken: underlying(assets, assetSymbols.SNX),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WETH)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.SNX)
-  },
+
   {
     inputToken: underlying(assets, assetSymbols.WBTC),
     strategy: RedemptionStrategyContract.UniswapV3LiquidatorFunder,

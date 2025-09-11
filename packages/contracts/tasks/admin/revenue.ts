@@ -53,6 +53,11 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
     let adminFeeTotal = 0n;
 
     for (const pool of pools) {
+      console.log("pool", pool.name, pool.comptroller);
+      if (pool.comptroller === "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556") {
+        console.log(`Skipping pool: ${pool.name} (${pool.comptroller})`);
+        continue;
+      }
       const comptroller = await hre.viem.getContractAt("IonicComptroller", pool.comptroller);
       const markets = await comptroller.read.getAllMarkets();
       let poolIonicFeesTotal = 0n;
@@ -168,7 +173,7 @@ task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Perfor
           const performanceFeeRewardTokens = (
             await flywheelContract.simulate.rewardsAccrued([await flywheelContract.read.feeRecipient()])
           ).result;
-          const rewardToken = await hre.viem.getContractAt("ERC20", await flywheelContract.read.rewardToken());
+          const rewardToken = await hre.viem.getContractAt("@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20", await flywheelContract.read.rewardToken());
           const rewardTokenPrice = await mpo.read.price([rewardToken.address]);
 
           const nativeFee =
@@ -259,15 +264,15 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
         console.log("USD THRESHOLD VALUE", parseFloat(taskArgs.threshold) * priceUsd);
         console.log(`Withdrawing fee from ${await cToken.read.symbol()} (underlying: ${underlying})`);
 
-        if (admin.toLowerCase() !== deployer.toLowerCase()) {
-          await prepareAndLogTransaction({
-            contractInstance: cToken,
-            functionName: "_withdrawAdminFees",
-            args: [adminFee],
-            description: `Withdrawing admin fees from ${await cToken.read.symbol()} (underlying: ${underlying})`,
-            inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }]
-          });
-        } else {
+        // if (admin.toLowerCase() !== deployer.toLowerCase()) {
+        //   await prepareAndLogTransaction({
+        //     contractInstance: cToken,
+        //     functionName: "_withdrawAdminFees",
+        //     args: [adminFee],
+        //     description: `Withdrawing admin fees from ${await cToken.read.symbol()} (underlying: ${underlying})`,
+        //     inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }]
+        //   });
+        // } else {
           tx = await cToken.write._withdrawAdminFees([adminFee]);
           await publicClient.waitForTransactionReceipt({ hash: tx });
           console.log("tx: ", tx);
@@ -276,14 +281,14 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
               nativeFeeAdmin
             )}`
           );
-        }
+        // }
       }
     }
   });
 
 task("revenue:feedistrubutor:withdraw", "Calculate the fees accrued from admin fees")
   .addParam("signer", "The address of the current deployer", "deployer", types.string)
-  .addParam("threshold", "Threshold for ionic fee seizing denominated in native", "0.01", types.string)
+  .addParam("threshold", "Threshold for ionic fee seizing denominated in native", "0", types.string)
   .setAction(async (_taskArgs, hre) => {
     const publicClient = await hre.viem.getPublicClient();
     const { deployer } = await hre.getNamedAccounts();
@@ -292,6 +297,7 @@ task("revenue:feedistrubutor:withdraw", "Calculate the fees accrued from admin f
       "FeeDistributor",
       (await hre.deployments.get("FeeDistributor")).address as Address
     );
+    console.log("FFD ADDRESS: ", ffd.address);
     const admin = await ffd.read.owner();
 
     const { pools } = await setUpFeeCalculation(hre);
@@ -301,7 +307,7 @@ task("revenue:feedistrubutor:withdraw", "Calculate the fees accrued from admin f
       for (const market of markets) {
         const cToken = await hre.viem.getContractAt("ICErc20", market);
         const _underlying = await cToken.read.underlying();
-        const underlying = await hre.viem.getContractAt("ERC20", _underlying);
+        const underlying = await hre.viem.getContractAt("@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20", _underlying);
         const balance = await underlying.read.balanceOf([ffd.address]);
         console.log(
           "underlying: ",

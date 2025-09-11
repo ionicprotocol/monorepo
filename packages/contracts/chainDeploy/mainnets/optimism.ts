@@ -112,12 +112,12 @@ export const deploy = async ({
     chainlinkAssets
   });
 
-  // //// Uniswap V3 Liquidator Funder
-  // const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
-  //   from: deployer,
-  //   args: [],
-  //   log: true,
-  //   waitConfirmations: 1
-  // });
-  // console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+  //// Uniswap V3 Liquidator Funder
+  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 };

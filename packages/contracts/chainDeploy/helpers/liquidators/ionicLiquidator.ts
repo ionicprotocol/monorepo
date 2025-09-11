@@ -122,11 +122,22 @@ export const configureIonicLiquidator = async ({
 
   for (const redemptionStrategyConfig of chainIdToConfig[chainId].redemptionStrategies) {
     const { strategy } = redemptionStrategyConfig;
-    const redemptionStrategyContract = await viem.getContractAt(
-      strategy as string,
-      (await deployments.get(strategy)).address as Address,
-      { client: { public: publicClient, wallet: walletClient } }
-    );
+
+    // Skip if strategy is undefined or deployment doesn't exist
+    if (!strategy) {
+      console.log(`Skipping undefined strategy`);
+      continue;
+    }
+
+    const deployment = await deployments.getOrNull(strategy);
+    if (!deployment) {
+      console.log(`Skipping strategy ${strategy} - deployment not found`);
+      continue;
+    }
+
+    const redemptionStrategyContract = await viem.getContractAt(strategy as string, deployment.address as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
 
     const whitelistedAlready = await ionicLiquidator.read.redemptionStrategiesWhitelist([
       redemptionStrategyContract.address
@@ -139,11 +150,22 @@ export const configureIonicLiquidator = async ({
 
   for (const fundingStrategy of chainIdToConfig[chainId].fundingStrategies) {
     const { strategy } = fundingStrategy;
-    const fundingStrategyContract = await viem.getContractAt(
-      strategy as string,
-      (await deployments.get(strategy)).address as Address,
-      { client: { public: publicClient, wallet: walletClient } }
-    );
+
+    // Skip if strategy is undefined or deployment doesn't exist
+    if (!strategy) {
+      console.log(`Skipping undefined funding strategy`);
+      continue;
+    }
+
+    const deployment = await deployments.getOrNull(strategy);
+    if (!deployment) {
+      console.log(`Skipping funding strategy ${strategy} - deployment not found`);
+      continue;
+    }
+
+    const fundingStrategyContract = await viem.getContractAt(strategy as string, deployment.address as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
 
     const whitelistedAlready = await ionicLiquidator.read.redemptionStrategiesWhitelist([
       fundingStrategyContract.address
