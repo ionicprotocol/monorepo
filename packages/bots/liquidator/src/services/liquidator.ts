@@ -26,11 +26,47 @@ export class Liquidator {
     options?: { blockNumber?: bigint }
   ): Promise<T[]> {
     try {
+      // Preflight visibility: what does the PoolDirectory report?
+      try {
+        const [, allPools] = await this.sdk.contracts.PoolDirectory.read.getActivePools();
+        logger.info(`PoolDirectory returned ${allPools.length} active pools on chain ${this.sdk.chainId}`);
+        if (allPools.length > 0) {
+          const sample = allPools.slice(0, 10).map((p) => `${p.name}(${p.comptroller})`);
+          logger.info(
+            `First ${sample.length} pools: ${sample.join(", ")}${
+              allPools.length > sample.length ? ` ... (+${allPools.length - sample.length} more)` : ""
+            }`
+          );
+        }
+      } catch (e) {
+        logger.warn(`Unable to read active pools from PoolDirectory for visibility: ${e}`);
+      }
+
+      if (config.excludedComptrollers.length > 0) {
+        logger.info(
+          `Excluded comptrollers (${config.excludedComptrollers.length}): ${config.excludedComptrollers.join(",")}`
+        );
+      }
+
       const [liquidatablePools, erroredPools] = await this.sdk.getPotentialLiquidations<T>(
         config.excludedComptrollers as Address[],
         botType,
         options?.blockNumber
       );
+
+      logger.info(
+        `SDK getPotentialLiquidations returned ${liquidatablePools.length} pools with liquidations; errored pools: ${erroredPools.length}`
+      );
+      if (liquidatablePools.length > 0) {
+        const perPool = liquidatablePools
+          .slice(0, 10)
+          .map((p) => `${p.comptroller} liquidations=${p.liquidations.length}`);
+        logger.info(
+          `First ${perPool.length} liquidatable pools: ${perPool.join(", ")}${
+            liquidatablePools.length > perPool.length ? ` ... (+${liquidatablePools.length - perPool.length} more)` : ""
+          }`
+        );
+      }
       const filteredErroredPools = erroredPools.filter(
         (pool) => !Object.values(EXCLUDED_ERROR_CODES).includes(pool.error.code)
       );

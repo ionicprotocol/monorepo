@@ -133,22 +133,62 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
     const admin = await comptroller.read.admin();
     const rewardsDistributors = (await comptroller.read.getRewardsDistributors()) as Address[];
     if (!rewardsDistributors.map((s) => s.toLowerCase()).includes(flywheelAddress.toLowerCase())) {
-      if (admin.toLowerCase() !== deployer.toLowerCase()) {
-        await prepareAndLogTransaction({
-          contractInstance: comptroller,
-          functionName: "_addRewardsDistributor",
-          args: [flywheelAddress],
-          description: `Add flywheel ${flywheelAddress} to pool ${poolAddress}`,
-          inputs: [{ internalType: "address", name: "rewardsDistributor", type: "address" }]
-        });
-      } else {
-        const addTx = await comptroller.write._addRewardsDistributor([flywheelAddress]);
-        await publicClient.waitForTransactionReceipt({ hash: addTx });
-        console.log({ addTx });
-      }
+      // if (admin.toLowerCase() !== deployer.toLowerCase()) {
+      // await prepareAndLogTransaction({
+      //   contractInstance: comptroller,
+      //   functionName: "_addRewardsDistributor",
+      //   args: [flywheelAddress],
+      //   description: `Add flywheel ${flywheelAddress} to pool ${poolAddress}`,
+      //   inputs: [{ internalType: "address", name: "rewardsDistributor", type: "address" }]
+      // });
+      // } else {
+      const addTx = await comptroller.write._addRewardsDistributor([flywheelAddress]);
+      await publicClient.waitForTransactionReceipt({ hash: addTx });
+      console.log({ addTx });
+      // }
     } else {
       console.log(`Flywheel ${flywheelAddress} already added to pool ${poolAddress}`);
     }
+  });
+
+task("flywheel:deploy-reward-accumulator", "Deploy a single RewardAccumulator with a specific name")
+  .addParam(
+    "market",
+    "Market address for the RewardAccumulator",
+    "0xF1bbECD6aCF648540eb79588Df692c6b2F0fbc09",
+    types.string
+  )
+  .addParam("side", "Side for the RewardAccumulator (0 for supply, 1 for borrow)", "1", types.string)
+  .setAction(async (taskArgs, { deployments, getNamedAccounts, viem }) => {
+    const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
+    const marketAddress = taskArgs.market;
+    const side = taskArgs.side;
+
+    const deploymentName = `RewardAccumulator_${marketAddress}_${side}`;
+
+    const rewardAccumulatorDeployment = await deployments.deploy(deploymentName, {
+      contract: "RewardAccumulator",
+      from: deployer,
+      log: true,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: []
+          }
+        }
+        // owner: multisig
+      }
+    });
+
+    if (rewardAccumulatorDeployment.transactionHash) {
+      await publicClient.waitForTransactionReceipt({ hash: rewardAccumulatorDeployment.transactionHash });
+    }
+    console.log(
+      `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address} for market: ${marketAddress}, side: ${side}`
+    );
   });
 
 task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for LM rewards")

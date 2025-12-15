@@ -387,6 +387,7 @@ task("voter:setHistoricalPrice", "set historical prices over a range on Voter co
       second: "2-digit",
       timeZoneName: "short"
     };
+
     const epochDate = new Date(epoch * 1000).toLocaleString("en-US", options);
     const previousEpochDate = new Date(previousEpoch * 1000).toLocaleString("en-US", options);
 
@@ -398,11 +399,11 @@ task("voter:setHistoricalPrice", "set historical prices over a range on Voter co
     console.log(`Current historical price at epoch ${epoch}: ${priceAtEpoch}`);
 
     const userResponse = await new Promise((resolve) => {
-      process.stdout.write("Do you want to continue to set the price? (yes/no): ");
+      process.stdout.write("Do you want to continue to set the price for BOTH previous and current epochs? (yes/no): ");
       process.stdin.once("data", (data) => resolve(data.toString().trim()));
     });
 
-    if (userResponse.toLowerCase() !== "yes") {
+    if (typeof userResponse !== "string" || userResponse.toLowerCase() !== "yes") {
       console.log("Operation cancelled by user.");
       return;
     }
@@ -560,5 +561,414 @@ task("voter:upgrade", "set historical prices over a range on Voter contract").se
     }
 
     voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+  }
+);
+
+task("voter:getVoteDetails", "Get vote details for a specific token ID and LP asset")
+  .addParam("tokenid", "The NFT token ID to get vote details for", undefined, types.string)
+  .addParam("lpasset", "The LP asset address to get vote details for", undefined, types.string)
+  .setAction(async (taskArgs, { viem, deployments }) => {
+    const publicClient = await viem.getPublicClient();
+
+    const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+
+    const tokenId = BigInt(taskArgs.tokenid);
+    const lpAsset = taskArgs.lpasset as Address;
+
+    console.log(`Getting vote details for token ID: ${tokenId} and LP asset: ${lpAsset}`);
+
+    try {
+      const voteDetails = await voter.read.getVoteDetails([tokenId, lpAsset]);
+
+      console.log("Raw vote details result:", voteDetails);
+
+      console.log("Vote Details:");
+      console.log("=".repeat(50));
+      console.log(`Token ID: ${tokenId}`);
+      console.log(`LP Asset: ${lpAsset}`);
+      console.log(`Used Weight: ${voteDetails.usedWeight}`);
+      console.log(`Number of market votes: ${voteDetails.marketVotes.length}`);
+
+      if (voteDetails.marketVotes.length > 0) {
+        console.log("\nMarket Votes:");
+        console.log("-".repeat(50));
+        for (let i = 0; i < voteDetails.marketVotes.length; i++) {
+          console.log(`Market ${i + 1}:`);
+          console.log(`  Address: ${voteDetails.marketVotes[i]}`);
+          console.log(`  Side: ${voteDetails.marketVoteSides[i] === 0 ? "Supply" : "Borrow"}`);
+          console.log(`  Vote Weight: ${voteDetails.votes[i]}`);
+          console.log("");
+        }
+      } else {
+        console.log("No active votes found for this token ID and LP asset.");
+      }
+    } catch (error) {
+      console.error("Error getting vote details:", error);
+    }
+  });
+
+task("flywheel:accrueMarket", "Accrue a market on the specified Flywheel contract")
+  .addParam("market", "The market (ERC20) address to accrue", undefined, types.string)
+  .addParam("user", "The user address to accrue rewards for", undefined, types.string)
+  .setAction(async (taskArgs, { viem }) => {
+    const publicClient = await viem.getPublicClient();
+    const flywheelAddress = "0xA2c2417B7ceE6A5190C5A68A6eAFB9FbE76Bd3f6";
+    const market = taskArgs.market as Address;
+    const user = taskArgs.user as Address;
+
+    const flywheel = await viem.getContractAt("IonicFlywheel", flywheelAddress);
+
+    try {
+      // Use the publicClient to send the transaction
+      const txHash = await flywheel.write.accrue([market, user]);
+      console.log(`Accrue transaction sent! Hash: ${txHash}`);
+      // Wait for confirmation
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      if (receipt.status === "success") {
+        console.log("Accrue transaction confirmed.");
+      } else {
+        console.error("Accrue transaction failed:", receipt);
+      }
+    } catch (error) {
+      console.error("Error accruing market on flywheel:", error);
+    }
+  });
+
+task("voter:getTokenInfo", "Get comprehensive information for a specific token ID")
+  .addParam("tokenid", "The NFT token ID to get information for", undefined, types.string)
+  .setAction(async (taskArgs, { viem, deployments }) => {
+    const publicClient = await viem.getPublicClient();
+
+    const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+    const ve = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
+
+    const tokenId = BigInt(taskArgs.tokenid);
+
+    console.log(`Getting comprehensive information for token ID: ${tokenId}`);
+    console.log("=".repeat(60));
+
+    try {
+      // Get basic token info from veION
+      console.log("TOKEN OWNERSHIP & BASIC INFO:");
+      console.log("-".repeat(40));
+
+      try {
+        const owner = await ve.read.ownerOf([tokenId]);
+        console.log(`Owner: ${owner}`);
+      } catch (error) {
+        console.log("Owner: Token does not exist or error fetching owner");
+      }
+
+      try {
+        const balanceInfo = await ve.read.balanceOfNFT([tokenId]);
+        console.log(`Voting LPs: ${balanceInfo[0]}`);
+        console.log(`LP Balances: ${balanceInfo[1]}`);
+        console.log(`Boosts: ${balanceInfo[2]}`);
+      } catch (error) {
+        console.log("Balance info: Error fetching balance information");
+      }
+
+      // Get voting info from Voter contract
+      console.log("\nVOTING INFO:");
+      console.log("-".repeat(40));
+
+      const lastVoted = await voter.read.lastVoted([tokenId]);
+      console.log(`Last Voted Timestamp: ${lastVoted}`);
+
+      if (lastVoted > 0n) {
+        const date = new Date(Number(lastVoted) * 1000);
+        console.log(`Last Voted Date: ${date.toISOString()}`);
+      }
+
+      const isWhitelisted = await voter.read.isWhitelistedNFT([tokenId]);
+      console.log(`Is Whitelisted NFT: ${isWhitelisted}`);
+
+      // Get all LP tokens and check vote details for each
+      const lpTokens = await voter.read.getAllLpRewardTokens();
+      console.log(`\nTotal LP Tokens: ${lpTokens.length}`);
+
+      console.log("\nVOTE DETAILS PER LP ASSET:");
+      console.log("-".repeat(40));
+
+      let hasAnyVotes = false;
+      for (let i = 0; i < lpTokens.length; i++) {
+        const lpToken = lpTokens[i];
+        try {
+          const voteDetails = await voter.read.getVoteDetails([tokenId, lpToken]);
+
+          if (voteDetails.usedWeight > 0n || voteDetails.marketVotes.length > 0) {
+            hasAnyVotes = true;
+            console.log(`\nLP Token ${i + 1}: ${lpToken}`);
+            console.log(`  Used Weight: ${voteDetails.usedWeight}`);
+            console.log(`  Number of market votes: ${voteDetails.marketVotes.length}`);
+
+            if (voteDetails.marketVotes.length > 0) {
+              for (let j = 0; j < voteDetails.marketVotes.length; j++) {
+                console.log(`    Market ${j + 1}:`);
+                console.log(`      Address: ${voteDetails.marketVotes[j]}`);
+                console.log(`      Side: ${voteDetails.marketVoteSides[j] === 0 ? "Supply" : "Borrow"}`);
+                console.log(`      Vote Weight: ${voteDetails.votes[j]}`);
+              }
+            }
+          }
+        } catch (error) {
+          console.log(`  LP Token ${i + 1}: Error fetching vote details`);
+        }
+      }
+
+      if (!hasAnyVotes) {
+        console.log("No active votes found for this token ID across all LP assets.");
+      }
+
+      // Get epoch information
+      console.log("\nEPOCH INFO:");
+      console.log("-".repeat(40));
+      const currentTimestamp = BigInt(Math.floor(Date.now() / 1000));
+      const epochStart = await voter.read.epochStart([currentTimestamp]);
+      const epochNext = await voter.read.epochNext([currentTimestamp]);
+      const epochVoteStart = await voter.read.epochVoteStart([currentTimestamp]);
+      const epochVoteEnd = await voter.read.epochVoteEnd([currentTimestamp]);
+
+      console.log(`Current Timestamp: ${currentTimestamp}`);
+      console.log(`Current Epoch Start: ${epochStart}`);
+      console.log(`Next Epoch Start: ${epochNext}`);
+      console.log(`Current Epoch Vote Start: ${epochVoteStart}`);
+      console.log(`Current Epoch Vote End: ${epochVoteEnd}`);
+
+      const epochStartDate = new Date(Number(epochStart) * 1000);
+      const epochVoteStartDate = new Date(Number(epochVoteStart) * 1000);
+      const epochVoteEndDate = new Date(Number(epochVoteEnd) * 1000);
+
+      console.log(`Current Epoch Start Date: ${epochStartDate.toISOString()}`);
+      console.log(`Current Epoch Vote Start Date: ${epochVoteStartDate.toISOString()}`);
+      console.log(`Current Epoch Vote End Date: ${epochVoteEndDate.toISOString()}`);
+    } catch (error) {
+      console.error("Error getting token information:", error);
+    }
+  });
+
+task("flywheel:getRewardInfo", "Display rewardsCycle for each market in all pools from PoolDirectory").setAction(
+  async (taskArgs, { viem, deployments }) => {
+    // Get PoolDirectory address from deployments
+    const poolDirectoryDeployment = await deployments.get("PoolDirectory_Proxy");
+    const poolDirectoryAddress = poolDirectoryDeployment.address;
+
+    // Get PoolDirectory contract
+    const poolDirectory = await viem.getContractAt("PoolDirectory", poolDirectoryAddress as Address);
+
+    // Get Voter contract
+    const voterDeployment = await deployments.get("Voter");
+    const voter = await viem.getContractAt("Voter", voterDeployment.address as Address);
+
+    // Get all pools
+    const pools = await poolDirectory.read.getAllPools();
+
+    // Flywheel contract address (update if needed)
+    const flywheelAddress = "0xf871E19bf6B7E905B3994E1dF68521BafF636440" as Address;
+    // Get Flywheel contract
+    const flywheel = await viem.getContractAt("IonicFlywheelDynamicRewards", flywheelAddress);
+
+    // MarketSide enum: Supply = 0, Borrow = 1
+    const MarketSide = { Supply: 0, Borrow: 1 };
+
+    for (let i = 0; i < pools.length; i++) {
+      const pool = pools[i];
+      const poolName = pool.name ? pool.name : `Pool ${i}`;
+      const comptroller = pool.comptroller;
+
+      // Get pool's markets
+      let markets: Address[] = [];
+      try {
+        // Get IonicComptroller contract
+        const comptrollerContract = await viem.getContractAt("IonicComptroller", comptroller as Address);
+        // Get all markets from comptroller
+        const allMarkets = await comptrollerContract.read.getAllMarkets();
+        markets = Array.isArray(allMarkets) ? (allMarkets as Address[]) : [];
+      } catch (err) {
+        console.log(`Error fetching markets for pool ${poolName}:`, err);
+        continue;
+      }
+
+      if (markets.length === 0) {
+        continue;
+      }
+
+      console.log(`\n${poolName} (${comptroller}):`);
+      for (let j = 0; j < markets.length; j++) {
+        const market = markets[j] as Address;
+        try {
+          const flywheelRewardAccumulator = await flywheel.read.rewardAccumulators([market]);
+
+          // Check Supply side only
+          const voterSupplyAccumulator = await voter.read.marketToRewardAccumulators([market, MarketSide.Supply]);
+
+          let matchStatus = "";
+          if (flywheelRewardAccumulator.toLowerCase() === voterSupplyAccumulator.toLowerCase()) {
+            matchStatus = " ✅";
+          } else {
+            matchStatus = " ❌";
+          }
+
+          console.log(`  Market: ${market}`);
+          console.log(`    Flywheel: ${flywheelRewardAccumulator}${matchStatus}`);
+          console.log(`    Voter Supply: ${voterSupplyAccumulator}`);
+        } catch (err) {
+          console.log(`  Market: ${market}  Error fetching accumulator:`, err);
+        }
+      }
+    }
+  }
+);
+
+task("voter:checkAccumulatorBalances", "Check ION balances of all reward accumulators from Voter").setAction(
+  async (taskArgs, { viem, deployments, getChainId }) => {
+    const chainId = parseInt(await getChainId());
+
+    // Get Voter contract
+    const voterDeployment = await deployments.get("Voter");
+    const voter = await viem.getContractAt("Voter", voterDeployment.address as Address);
+
+    // Get ION token contract
+    const ionAddress = chainDeployConfig[chainId].config.ION as Address;
+    const ionToken = await viem.getContractAt("@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20", ionAddress);
+
+    // Get all markets from Voter
+    const marketsLength = await voter.read.marketsLength();
+    console.log(`Total markets in Voter: ${marketsLength}\n`);
+
+    // MarketSide enum: Supply = 0, Borrow = 1
+    const MarketSide = { Supply: 0, Borrow: 1 };
+
+    // Track unique accumulators to avoid duplicates
+    const accumulatorBalances = new Map<string, { balance: bigint; markets: string[] }>();
+
+    for (let i = 0; i < Number(marketsLength); i++) {
+      try {
+        const market = await voter.read.markets([BigInt(i)]);
+        const marketAddress = market[0] as Address; // First element is the market address
+        const marketSide = market[1] as number; // Second element is the side (0 or 1)
+
+        // Get reward accumulator for this market
+        const accumulator = await voter.read.marketToRewardAccumulators([marketAddress, marketSide]);
+
+        if (accumulator && accumulator !== "0x0000000000000000000000000000000000000000") {
+          const accumulatorLower = accumulator.toLowerCase();
+
+          // If we haven't seen this accumulator yet, get its balance
+          if (!accumulatorBalances.has(accumulatorLower)) {
+            const balance = await ionToken.read.balanceOf([accumulator]);
+            accumulatorBalances.set(accumulatorLower, {
+              balance,
+              markets: [`${marketAddress} (${marketSide === 0 ? "Supply" : "Borrow"})`]
+            });
+          } else {
+            // Add this market to the existing accumulator
+            const existing = accumulatorBalances.get(accumulatorLower)!;
+            existing.markets.push(`${marketAddress} (${marketSide === 0 ? "Supply" : "Borrow"})`);
+          }
+        }
+      } catch (err) {
+        console.log(`Error fetching market ${i}:`, err);
+      }
+    }
+
+    // Display results
+    console.log("REWARD ACCUMULATOR ION BALANCES:");
+    console.log("=".repeat(80));
+
+    let totalBalance = 0n;
+    let index = 1;
+
+    for (const [accumulator, data] of accumulatorBalances) {
+      console.log(`\n${index}. Accumulator: ${accumulator}`);
+      console.log(`   ION Balance: ${formatEther(data.balance)} ION`);
+      console.log(`   Markets (${data.markets.length}):`);
+      for (const market of data.markets) {
+        console.log(`     - ${market}`);
+      }
+      totalBalance += data.balance;
+      index++;
+    }
+
+    console.log("\n" + "=".repeat(80));
+    console.log(`Total Unique Accumulators: ${accumulatorBalances.size}`);
+    console.log(`Total ION Balance across all accumulators: ${formatEther(totalBalance)} ION`);
+  }
+);
+
+task("flywheel:getStrategyState", "Get strategyState for all markets from IonicFlywheelCore").setAction(
+  async (taskArgs, { viem, deployments }) => {
+    // Get PoolDirectory address from deployments
+    const poolDirectoryDeployment = await deployments.get("PoolDirectory_Proxy");
+    const poolDirectoryAddress = poolDirectoryDeployment.address;
+
+    // Get PoolDirectory contract
+    const poolDirectory = await viem.getContractAt("PoolDirectory", poolDirectoryAddress as Address);
+
+    // Get all pools
+    const pools = await poolDirectory.read.getAllPools();
+
+    // IonicFlywheelCore contract address
+    const flywheelCoreAddress = "0x1eE8E310e992E7932A2a0964b29eC6d820f517A2" as Address;
+    const flywheelCore = await viem.getContractAt("IonicFlywheel", flywheelCoreAddress);
+
+    console.log(`IonicFlywheelCore: ${flywheelCoreAddress}\n`);
+
+    for (let i = 0; i < pools.length; i++) {
+      const pool = pools[i];
+      const poolName = pool.name ? pool.name : `Pool ${i}`;
+      const comptroller = pool.comptroller;
+
+      // Get pool's markets
+      let markets: Address[] = [];
+      try {
+        // Get IonicComptroller contract
+        const comptrollerContract = await viem.getContractAt("IonicComptroller", comptroller as Address);
+        // Get all markets from comptroller
+        const allMarkets = await comptrollerContract.read.getAllMarkets();
+        markets = Array.isArray(allMarkets) ? (allMarkets as Address[]) : [];
+      } catch (err) {
+        console.log(`Error fetching markets for pool ${poolName}:`, err);
+        continue;
+      }
+
+      if (markets.length === 0) {
+        continue;
+      }
+
+      console.log(`\n${poolName} (${comptroller}):`);
+      console.log("=".repeat(80));
+
+      for (let j = 0; j < markets.length; j++) {
+        const market = markets[j] as Address;
+        try {
+          // Call strategyState - returns [index: uint224, lastUpdatedTimestamp: uint32]
+          const strategyStateResult = await (flywheelCore.read as any).strategyState([market]);
+          const index = strategyStateResult[0]; // uint224 index
+          const lastUpdatedTimestamp = strategyStateResult[1]; // uint32 lastUpdatedTimestamp
+
+          // Convert timestamp to readable date
+          const date = new Date(Number(lastUpdatedTimestamp) * 1000);
+          const dateString = date.toLocaleString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            timeZoneName: "short"
+          });
+
+          console.log(`\nMarket: ${market}`);
+          console.log(`  Index: ${index}`);
+          console.log(`  Last Updated: ${dateString}`);
+          console.log(`  Timestamp: ${lastUpdatedTimestamp}`);
+        } catch (err) {
+          console.log(`\nMarket: ${market}`);
+          console.log(`  Error: ${err}`);
+        }
+      }
+    }
   }
 );

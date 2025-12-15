@@ -10,7 +10,7 @@ import {
   http,
   type PublicClientConfig,
 } from "viem";
-import { mode } from "viem/chains";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
 import { sendDiscordNotification } from "./services/PERdiscord";
@@ -29,7 +29,7 @@ const startTime = Math.floor(new Date().getTime() / 1000);
 const account = privateKeyToAccount(config.adminPrivateKey as Hex);
 const clientConfig: PublicClientConfig = {
   batch: { multicall: { wait: 16 } },
-  chain: mode,
+  chain: chainIdtoChain[config.chainId],
   transport: fallback(config.rpcUrls.map((url) => http(url))),
   cacheTime: 4_000,
   pollingInterval: 4_000,
@@ -37,14 +37,14 @@ const clientConfig: PublicClientConfig = {
 const publicClient = createPublicClient(clientConfig);
 const walletClient = createWalletClient({
   account,
-  chain: mode,
+  chain: chainIdtoChain[config.chainId],
   transport: fallback(config.rpcUrls.map((url) => http(url))),
 });
 
 // Main function to handle liquidations
 (async function runPythLiquidator() {
   const chainName: string = config.chainName;
-  const ionicSdk = setUpSdk(mode.id, publicClient, walletClient);
+  const ionicSdk = setUpSdk(config.chainId, publicClient, walletClient);
   const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
   logger.info(`Target Liquidator Contract: ${ionicLiquidator}`);
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);

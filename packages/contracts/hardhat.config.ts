@@ -5,6 +5,7 @@ import "hardhat-deploy";
 import { HardhatUserConfig, subtask } from "hardhat/config";
 import { config as dotenv } from "dotenv";
 import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from "hardhat/builtin-tasks/task-names";
+import "@nomicfoundation/hardhat-verify";
 
 import "./tasks";
 import { base, fraxtal, mode, superseed, worldchain } from "viem/chains";
