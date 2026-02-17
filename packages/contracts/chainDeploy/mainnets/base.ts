@@ -146,25 +146,6 @@ export const deploy = async ({
     chainId
   });
 
-  const eOracleAssets = base.assets
-    .filter((asset) => asset.oracle === OracleTypes.eOracle)
-    .map((asset) => ({
-      aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
-      feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
-      symbol: asset.symbol
-    }));
-  await deployChainlinkOracle({
-    run,
-    viem,
-    getNamedAccounts,
-    deployments,
-    deployConfig: { ...deployConfig, nativeTokenUsdChainlinkFeed: "0x75DfcbeDF377f99898535AeE7Fa1Cd1D1e8E41b0" },
-    assets: base.assets,
-    chainlinkAssets: eOracleAssets,
-    namePostfix: "eOracle",
-    chainId
-  });
-
   const diaAssets = base.assets
     .filter((asset) => asset.oracle === OracleTypes.DiaPriceOracle)
     .map((asset) => ({

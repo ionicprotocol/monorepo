@@ -1,6 +1,7 @@
 import "./pool";
 import "./market";
 import "./rewards";
+import "./liquidation";
 
 export const COMPTROLLER_MAIN = "0xF448A36feFb223B8E46e36FF12091baBa97bdF60";
 export const ION = "0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013";

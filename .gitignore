@@ -44,3 +44,4 @@ packages/contracts/cache/
 packages/contracts/cache_hardhat/
 packages/contracts/transactions.json
 notes.md
+.playwright-mcp/

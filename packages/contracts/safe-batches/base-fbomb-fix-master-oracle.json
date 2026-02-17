@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "chainId": "8453",
+  "createdAt": 1766747281,
+  "meta": {
+    "name": "Update MasterPriceOracle to use SimplePriceOracle for fBOMB",
+    "description": "Point fBOMB to SimplePriceOracle instead of the stale Redstone ChainlinkPriceOracleV2. This is step 2 of 3 to fix the fBOMB market oracle issue.",
+    "txBuilderVersion": "1.16.5"
+  },
+  "transactions": [
+    {
+      "to": "0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4",
+      "value": "0",
+      "data": "0x9c9192c600000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000100000000000000000000000074ccbe53f77b08632ce0cb91d3a545bf6b8e09790000000000000000000000000000000000000000000000000000000000000001000000000000000000000000bbdca7858ac2417b06636f7ba35e7d9ea39402ea",
+      "contractMethod": {
+        "name": "add",
+        "inputs": [
+          { "name": "underlyings", "type": "address[]", "internalType": "address[]" },
+          { "name": "_oracles", "type": "address[]", "internalType": "contract BasePriceOracle[]" }
+        ],
+        "payable": false
+      },
+      "contractInputsValues": {
+        "underlyings": "[0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979]",
+        "_oracles": "[0xBbDcA7858ac2417b06636F7BA35e7d9EA39402ea]"
+      }
+    }
+  ]
+}

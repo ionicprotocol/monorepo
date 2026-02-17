@@ -61,9 +61,9 @@ export const assets: SupportedAsset[] = [
     underlying: USDC,
     name: "USD Coin",
     decimals: 6,
-    oracle: OracleTypes.eOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
-      aggregator: "0x4ba73879B0C073Db595aBE9Ba27104D83f024286",
+      aggregator: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://basescan.org", USDC)
@@ -73,9 +73,9 @@ export const assets: SupportedAsset[] = [
     underlying: wstETH,
     name: "Wrapped Staked ETH",
     decimals: 18,
-    oracle: OracleTypes.eOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
-      aggregator: "0xDB5d5dE97eD9125283ADa3560FE4f11e996041ab",
+      aggregator: "0xa669E5272E60f78299F4824495cE01a3923f4380",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://basescan.org", wstETH)
@@ -97,9 +97,9 @@ export const assets: SupportedAsset[] = [
     underlying: ezETH,
     name: "Renzo Restaked ETH",
     decimals: 18,
-    oracle: OracleTypes.eOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
-      aggregator: "0xb1E7Db061e58Fa039c5C38a7f96e9476c2cfC78a",
+      aggregator: "0xC4300B7CF0646F0Fe4C5B2ACFCCC4dCA1346f5d8",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://basescan.org", ezETH)
@@ -145,9 +145,9 @@ export const assets: SupportedAsset[] = [
     underlying: weETH,
     name: "Wrapped eETH",
     decimals: 18,
-    oracle: OracleTypes.eOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
-      aggregator: "0x15a3694998DDb14815536B8a5F74130CA8f5236A",
+      aggregator: "0xFC1415403EbB0c693f9a7844b92aD2Ff24775C65",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     initialCf: "0.70",
@@ -472,9 +472,9 @@ export const assets: SupportedAsset[] = [
     underlying: msUSD,
     name: "Metronome Synth USD",
     decimals: 18,
-    oracle: OracleTypes.eOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
-      aggregator: "0x4ba73879B0C073Db595aBE9Ba27104D83f024286",
+      aggregator: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     initialCf: "0.10",

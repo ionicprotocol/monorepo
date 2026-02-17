@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "chainId": "8453",
+  "createdAt": 1766747281,
+  "meta": {
+    "name": "Pause fBOMB Market (Mint and Borrow)",
+    "description": "Pause the fBOMB market to prevent new supply and borrow operations while the oracle is using a fixed price. This is step 3 of 3 to fix the fBOMB market oracle issue.",
+    "txBuilderVersion": "1.16.5"
+  },
+  "transactions": [
+    {
+      "to": "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13",
+      "value": "0",
+      "data": "0x3bcf7ec1000000000000000000000000d333681242f376f9005d1208ff946c3ee73ed6590000000000000000000000000000000000000000000000000000000000000001",
+      "contractMethod": {
+        "name": "_setMintPaused",
+        "inputs": [
+          { "name": "cToken", "type": "address", "internalType": "contract ICErc20" },
+          { "name": "state", "type": "bool", "internalType": "bool" }
+        ],
+        "payable": false
+      },
+      "contractInputsValues": {
+        "cToken": "0xd333681242F376f9005d1208ff946C3EE73eD659",
+        "state": "true"
+      }
+    },
+    {
+      "to": "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13",
+      "value": "0",
+      "data": "0x18c882a5000000000000000000000000d333681242f376f9005d1208ff946c3ee73ed6590000000000000000000000000000000000000000000000000000000000000001",
+      "contractMethod": {
+        "name": "_setBorrowPaused",
+        "inputs": [
+          { "name": "cToken", "type": "address", "internalType": "contract ICErc20" },
+          { "name": "state", "type": "bool", "internalType": "bool" }
+        ],
+        "payable": false
+      },
+      "contractInputsValues": {
+        "cToken": "0xd333681242F376f9005d1208ff946C3EE73eD659",
+        "state": "true"
+      }
+    }
+  ]
+}

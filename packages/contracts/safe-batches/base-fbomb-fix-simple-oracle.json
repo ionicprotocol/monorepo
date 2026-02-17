@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "chainId": "8453",
+  "createdAt": 1766747281,
+  "meta": {
+    "name": "Set fBOMB Fixed Price in SimplePriceOracle",
+    "description": "Set a fixed price for fBOMB (~$0.02 USD) in SimplePriceOracle to prevent oracle reverts. This is step 1 of 3 to fix the fBOMB market oracle issue.",
+    "txBuilderVersion": "1.16.5"
+  },
+  "transactions": [
+    {
+      "to": "0xBbDcA7858ac2417b06636F7BA35e7d9EA39402ea",
+      "value": "0",
+      "data": "0x09a8acb000000000000000000000000074ccbe53f77b08632ce0cb91d3a545bf6b8e097900000000000000000000000000000000000000000000000000000620f0c62ecf",
+      "contractMethod": {
+        "name": "setDirectPrice",
+        "inputs": [
+          { "name": "asset", "type": "address", "internalType": "address" },
+          { "name": "_price", "type": "uint256", "internalType": "uint256" }
+        ],
+        "payable": false
+      },
+      "contractInputsValues": {
+        "asset": "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979",
+        "_price": "6738548240079"
+      }
+    }
+  ]
+}
