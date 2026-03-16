@@ -63,23 +63,21 @@ const WithdrawTab = ({
     chainId
   });
 
-  const { isLoadingPredictedHealthFactor, healthFactor, hfpStatus } = useHealth(
-    {
-      comptrollerAddress,
-      cToken: selectedMarketData.cToken,
-      activeTab: 'withdraw',
-      amount: amountAsBInt,
-      exchangeRate: selectedMarketData.exchangeRate,
-      decimals: selectedMarketData.underlyingDecimals
-    }
-  );
+  const { healthFactor, hfpStatus } = useHealth({
+    comptrollerAddress,
+    cToken: selectedMarketData.cToken,
+    activeTab: 'withdraw',
+    amount: amountAsBInt,
+    exchangeRate: selectedMarketData.exchangeRate,
+    decimals: selectedMarketData.underlyingDecimals
+  });
 
   const isDisabled =
     !amount ||
     amountAsBInt === 0n ||
-    isLoadingPredictedHealthFactor ||
-    hfpStatus === HFPStatus.CRITICAL ||
-    hfpStatus === HFPStatus.UNKNOWN;
+    // isLoadingPredictedHealthFactor ||
+    // hfpStatus === HFPStatus.UNKNOWN ||
+    hfpStatus === HFPStatus.CRITICAL;
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);

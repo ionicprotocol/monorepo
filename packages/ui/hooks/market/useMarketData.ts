@@ -129,8 +129,12 @@ export const useMarketData = (
 
   const marketData = useMemo(() => {
     if (!assets) return [];
+    const selectedPoolData = Object.values(pools[+chain].pools).find(
+      (pool) => pool.id === selectedPool
+    );
+    if (!selectedPoolData) return [];
 
-    const transformedData = pools[+chain].pools[+selectedPool].assets
+    const transformedData = selectedPoolData.assets
       .map((symbol: string) => {
         const asset = assets.find((a) => a.underlyingSymbol === symbol);
         if (!asset) return null;

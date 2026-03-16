@@ -1,7 +1,7 @@
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import { ionicLiquidatorAbi } from "@ionicprotocol/sdk";
 import { createWalletClient, encodeAbiParameters, encodeFunctionData, fallback, Hex, http } from "viem";
-import { mode } from "viem/chains";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
 import config from "./config";
@@ -13,16 +13,16 @@ import { createIonicPublicClient } from "./utils/client";
   return this.toString();
 };
 const account = privateKeyToAccount(config.adminPrivateKey as Hex);
-const publicClient = createIonicPublicClient(mode, config.rpcUrls);
+const publicClient = createIonicPublicClient(chainIdtoChain[config.chainId], config.rpcUrls);
 const walletClient = createWalletClient({
   account,
-  chain: mode,
+  chain: chainIdtoChain[config.chainId],
   transport: fallback(config.rpcUrls.map((url) => http(url))),
 });
 
 (async function () {
   const chainName: string = config.chainName;
-  const ionicSdk = setUpSdk(mode.id, publicClient, walletClient);
+  const ionicSdk = setUpSdk(config.chainId, publicClient, walletClient);
   const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
   const client: Client = new Client({ baseUrl: config.expressRelayEndpoint });
   const liquidation = {

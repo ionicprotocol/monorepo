@@ -50,6 +50,9 @@ export type PoolAssetStructOutput = {
 
 const PAGE_SIZE = 500; // Define the page size for pagination
 const BATCH_SIZE = 100; // Define the batch size for processing assets
+const LOG_SAMPLE = 50; // Max number of user-level logs per pool to avoid excessive verbosity
+const LOG_ALL_BORROWERS = process.env.LOG_ALL_BORROWERS === "true"; // Log every borrower examined if true
+const IGNORE_HF_MIN = process.env.IGNORE_HF_MIN === "true"; // If true, do not require health > HF_MIN
 const HF_MIN = 500000000000000000n;
 async function processAssetsInBatches(
   users: readonly `0x${string}`[],
@@ -57,22 +60,37 @@ async function processAssetsInBatches(
   maxHealth: bigint,
   sdk: IonicSdk,
   poolUsers: PoolUserStruct[],
-  botType: BotType
+  botType: BotType,
+  startCounter: number
 ) {
   const mutableUsers: `0x${string}`[] = [...users];
   // console.log("BotTypefromGetPOOlUsers", botType)
   const healthFactorThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold();
   // console.log("healthFactorThreshold", healthFactorThreshold)
+  let logged = 0;
+  let examined = startCounter;
   for (let i = 0; i < mutableUsers.length; i += BATCH_SIZE) {
     const batchUsers = mutableUsers.slice(i, i + BATCH_SIZE);
     await Promise.all(
       batchUsers.map(async (assets, index) => {
+        examined++;
         try {
           const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
-          if (health < maxHealth && health > HF_MIN && botType === BotType.Pyth) {
+          const aboveMin = IGNORE_HF_MIN ? true : health > HF_MIN;
+          const qualifiesPyth = aboveMin && health < maxHealth && botType === BotType.Pyth;
+          const qualifiesStd = aboveMin && health < healthFactorThreshold && botType == BotType.Standard;
+          if (LOG_ALL_BORROWERS || logged < LOG_SAMPLE) {
+            sdk.logger.info(
+              `[${examined}] Examined borrower ${batchUsers[index]} on ${comptroller} | health=${health.toString()} | qualifies=${
+                qualifiesPyth || qualifiesStd
+              }`
+            );
+            if (!LOG_ALL_BORROWERS) logged++;
+          }
+          if (qualifiesPyth) {
             // console.log("I am in pyth loop")
             poolUsers.push({ account: batchUsers[index], health });
-          } else if (health < healthFactorThreshold && health > HF_MIN && botType == BotType.Standard) {
+          } else if (qualifiesStd) {
             // console.log("I am in standard loop, ")
             poolUsers.push({ account: batchUsers[index], health });
           }
@@ -82,6 +100,7 @@ async function processAssetsInBatches(
       })
     );
   }
+  sdk.logger.info(`Processed ${examined - startCounter} borrowers in batch for comptroller ${comptroller}`);
 }
 
 async function getFusePoolUsers(
@@ -94,18 +113,30 @@ async function getFusePoolUsers(
   const comptrollerInstance = sdk.createComptroller(comptroller);
   let page = 0;
   let hasMoreData = true;
+  let examined = 0;
 
   while (hasMoreData) {
     const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(page), BigInt(PAGE_SIZE)]);
     if (users.length === 0) {
       hasMoreData = false;
     }
-
+    sdk.logger.info(
+      `Borrowers page ${page} for comptroller ${comptroller}: count=${users.length} (pageSize=${PAGE_SIZE})`
+    );
+    if (users.length > 0) {
+      const sample = users.slice(0, Math.min(users.length, 20));
+      sdk.logger.info(`First ${sample.length} borrowers on page ${page}: ${sample.join(", ")}`);
+    }
     // Process assets in batches
-    await processAssetsInBatches(users, comptroller, maxHealth, sdk, poolUsers, botType);
+    await processAssetsInBatches(users, comptroller, maxHealth, sdk, poolUsers, botType, examined);
+    examined += users.length;
 
     page++;
   }
+
+  sdk.logger.info(
+    `Finished examining ${examined} borrowers for comptroller ${comptroller}; qualified=${poolUsers.length}`
+  );
 
   return {
     comptroller,
@@ -122,6 +153,15 @@ export default async function getAllFusePoolUsers(
   botType: BotType
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
   const [, allPools] = await sdk.contracts.PoolDirectory.read.getActivePools();
+  sdk.logger.info(`PoolDirectory active pools: ${allPools.length}`);
+  if (allPools.length > 0) {
+    const samplePools = allPools.slice(0, 10).map((p) => `${p.name}(${p.comptroller})`);
+    sdk.logger.info(
+      `First ${samplePools.length} pools: ${samplePools.join(", ")}${
+        allPools.length > samplePools.length ? ` ... (+${allPools.length - samplePools.length} more)` : ""
+      }`
+    );
+  }
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   const startTime = performance.now();
@@ -141,6 +181,14 @@ export default async function getAllFusePoolUsers(
           liquidationIncentive: await comptrollerInstance.read.liquidationIncentiveMantissa()
         });
         userCount = poolUserParams.length;
+        if (userCount > 0) {
+          const sampleUsers = poolUserParams.slice(0, Math.min(userCount, 20));
+          sdk.logger.info(
+            `Users considered in ${name} (${comptroller}): ${sampleUsers
+              .map((u) => `${u.account}:${u.health.toString()}`)
+              .join(", ")}${userCount > sampleUsers.length ? ` ... (+${userCount - sampleUsers.length} more)` : ""}`
+          );
+        }
       } catch (e) {
         const msg = `Error getting pool users for ${comptroller}: ${e}`;
         erroredPools.push({ comptroller, msg, error: e });

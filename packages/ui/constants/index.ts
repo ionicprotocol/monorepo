@@ -171,6 +171,7 @@ type PoolParams = {
     id: string;
     name: string;
     assets: string[];
+    shortName?: string;
   }[];
   vaults?: {
     id: string;
@@ -199,7 +200,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: [
           'USDC',
           'WETH',
@@ -230,6 +231,12 @@ export const pools: Record<number, PoolParams> = {
           'fBOMB',
           'KLIMA'
         ]
+      },
+      {
+        id: '3',
+        name: 'Morpho Seamless',
+        assets: ['smUSDC', 'USDC'],
+        shortName: 'Morpho Seamless'
       }
     ]
     // vaults: [
@@ -294,7 +301,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: [
           'USDC',
           'USDT',
@@ -320,7 +327,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: ['USDC', 'USDT', 'WETH', 'WBTC', 'tBTC', 'SOV']
       }
     ]
@@ -335,7 +342,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: ['FRAX', 'wfrxETH', 'insfrxETH', 'sfrxETH', 'sFRAX', 'FXS']
       }
     ]
@@ -350,7 +357,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: ['WETH', 'USDC', 'USDT', 'WBTC', 'LSK']
       }
     ]
@@ -365,8 +372,8 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
-        assets: ['WETH', 'USDC', 'oUSDT']
+        name: 'Main',
+        assets: ['WETH']
       }
     ]
   },
@@ -380,7 +387,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: ['WETH']
       }
     ]
@@ -395,7 +402,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: ['WETH']
       }
     ]
@@ -410,8 +417,34 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: ['WETH', 'USDe', 'rswETH', 'weETH']
+      }
+    ]
+  },
+  [camptest.chainId]: {
+    name: 'Camp Testnet',
+    arrow: 'ffffff',
+    bg: 'bg-camp',
+    text: 'text-white',
+    border: 'border-camp',
+    logo: '/img/logo/CAMP.png',
+    pools: [{ id: '0', name: 'Main', assets: ['WETH'] }]
+  },
+  [ozeantest.chainId]: {
+    arrow: 'ffffff',
+    name: 'Ozean Testnet',
+    hexcode: '#2467ed',
+    bg: 'bg-blue-600',
+    accentbg: 'bg-blue-600',
+    text: 'text-white',
+    border: 'border-base',
+    logo: '/img/logo/OZEAN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main',
+        assets: ['WUSDX']
       }
     ]
   },
@@ -425,7 +458,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Pool',
+        name: 'Main',
         assets: ['WETH', 'USDC', 'ASTR']
       }
     ]

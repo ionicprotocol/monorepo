@@ -5,6 +5,7 @@ import "hardhat-deploy";
 import { HardhatUserConfig, subtask } from "hardhat/config";
 import { config as dotenv } from "dotenv";
 import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from "hardhat/builtin-tasks/task-names";
+import "@nomicfoundation/hardhat-verify";
 
 import "./tasks";
 import { base, fraxtal, mode, superseed, worldchain } from "viem/chains";
@@ -15,14 +16,9 @@ const accounts = [
   process.env.DEPLOYER || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" // test account
 ];
 
-(BigInt.prototype as any).toJSON = function () {
+BigInt.prototype.toJSON = function () {
   return this.toString();
 };
-
-subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS).setAction(async (_, __, runSuper) => {
-  const paths = await runSuper();
-  return paths.filter((p: string) => !p.endsWith(".t.sol"));
-});
 
 const config: HardhatUserConfig = {
   namedAccounts: {
@@ -33,7 +29,6 @@ const config: HardhatUserConfig = {
       [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
       [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
-      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       1868: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       325000: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       7849306: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
@@ -204,11 +199,11 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      base: process.env.ETHERSCAN_API_KEY_BASE!,
-      optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!,
+      base: process.env.ETHERSCAN_API_KEY_BASE,
+      optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM,
       lisk: "empty",
       superseed: "empty",
-      worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!,
+      worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN,
       ink: "empty",
       swellchain: "empty",
       camptest: "empty",

@@ -228,6 +228,7 @@ export enum assetSymbols {
   mBASIS = "mBASIS",
   msETH = "msETH",
   msUSD = "msUSD",
+  smUSDC = "smUSDC",
 
   // optimism
   OP = "OP",

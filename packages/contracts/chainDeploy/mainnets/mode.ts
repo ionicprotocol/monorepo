@@ -36,13 +36,16 @@ export const deployConfig: ChainDeployConfig = {
   },
   wtoken: mode.chainAddresses.W_TOKEN as Address,
   veION: {
-    lpTokens: ["0xC6A394952c097004F83d2dfB61715d245A38735a"],
-    lpStakingStrategies: [],
-    lpStakingWalletImplementations: [],
-    lpExternalStakingContracts: [],
-    lpTokenWhitelistStatuses: [true],
-    lpTokenTypes: [0],
-    minimumLockAmounts: [parseEther("0.01")],
+    lpTokens: ["0xC6A394952c097004F83d2dfB61715d245A38735a", "0x690A74d2eC0175a69C0962B309E03021C0b5002E"],
+    lpStakingStrategies: ["VeloAeroStakingStrategy", "VeloAeroStakingStrategy"],
+    lpStakingWalletImplementations: ["VeloAeroStakingWallet", "VeloAeroStakingWallet"],
+    lpExternalStakingContracts: [
+      "0x3f385FeDd141F57323dD91aA735C7243382831D8",
+      "0x8ff8b21a0736738b25597D32d8f7cf658f39f157"
+    ],
+    lpTokenWhitelistStatuses: [true, true],
+    lpTokenTypes: [0, 1],
+    minimumLockAmounts: [parseEther("0.01"), parseEther("0.01")],
     minimumLockDuration: 6 * 30 * 24 * 60 * 60,
     maxEarlyWithdrawFee: parseEther("0.8"),
     maxVotingNum: 20

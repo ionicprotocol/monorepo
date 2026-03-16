@@ -75,6 +75,11 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
 
   bool distributionTimelockAlive;
 
+  /// @notice Historical prices for each reward token and epoch
+  mapping(address => mapping(uint256 => uint256)) public historicalPrices;
+
+  address public distributor;
+
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                               Modifiers                                   ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -96,6 +101,11 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
    */
   modifier onlyGovernance() {
     if (msg.sender != governor) revert NotGovernor();
+    _;
+  }
+
+  modifier onlyDistributor() {
+    if (msg.sender != distributor) revert NotDistributor();
     _;
   }
 
@@ -215,8 +225,9 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
   /// @inheritdoc IVoter
-  function distributeRewards() external onlyGovernance {
-    if (distributionTimelockAlive && block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
+  function distributeRewards() external onlyDistributor {
+    if (distributionTimelockAlive && block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp))
+      revert NotDistributeWindow();
     uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
     uint256 _totalLPValueETH = _calculateTotalLPValue();
     for (uint256 i = 0; i < markets.length; i++) {
@@ -458,6 +469,11 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     emit GovernorSet(_governor);
   }
 
+  function setDistributor(address _distributor) public onlyOwner {
+    if (_distributor == address(0)) revert ZeroAddress();
+    distributor = _distributor;
+  }
+
   /// @inheritdoc IVoter
   function addMarkets(Market[] calldata _markets) external onlyGovernance {
     for (uint256 i = 0; i < _markets.length; i++) {
@@ -518,6 +534,33 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
   function toggleDistributionTimelockAlive(bool _isAlive) external onlyGovernance {
     distributionTimelockAlive = _isAlive;
     emit DistributionTimelockAliveToggled(_isAlive);
+  }
+
+  /**
+   * @notice Sets historical prices for LP tokens at specific epochs
+   * @param epochTimestamp The timestamp of the epoch
+   * @param lpToken The LP token address
+   * @param price The price to set
+   */
+  function setHistoricalPrices(uint256 epochTimestamp, address lpToken, uint256 price) external onlyDistributor {
+    uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
+    historicalPrices[lpToken][epochStart] = price;
+    // emit HistoricalPriceSet(epochTimestamp, lpToken, price);
+  }
+
+  function emergencyWithdraw(uint256 amount, address ionicToken) external onlyOwner {
+    IERC20(ionicToken).safeTransfer(msg.sender, amount);
+  }
+
+  /**
+   * @notice Gets the historical price for a specific LP token at a given epoch
+   * @param lpToken The LP token address
+   * @param epochTimestamp The timestamp of the epoch
+   * @return The historical price of the LP token at the specified epoch
+   */
+  function getHistoricalPrice(address lpToken, uint256 epochTimestamp) external view returns (uint256) {
+    uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
+    return historicalPrices[lpToken][epochStart];
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗

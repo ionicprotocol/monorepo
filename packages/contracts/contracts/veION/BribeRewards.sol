@@ -218,9 +218,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, Ownable2Step
     uint256 epochTimestamp
   ) internal view returns (uint256) {
     uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
-    if (historicalPrices[lpToken][epochStart] == 0) revert HistoricalPriceNotSet(lpToken, epochStart);
-    uint256 _priceAtTimestamp = historicalPrices[lpToken][epochStart];
-    uint256 ethValue = (amount * _priceAtTimestamp) / 1e18;
+    uint256 historicalPrice = IVoter(voter).getHistoricalPrice(lpToken, epochTimestamp);
+    if (historicalPrice == 0) revert HistoricalPriceNotSet(lpToken, epochStart);
+    uint256 ethValue = (amount * historicalPrice) / 1e18;
     return ethValue;
   }
 
