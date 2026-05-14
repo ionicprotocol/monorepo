@@ -308,9 +308,14 @@ export const createAssetMasterDataHandler =
       console.error('Handler error:', err);
       return {
         statusCode: 500,
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           message: err instanceof Error ? err.message : 'Unknown error',
-          stack: err instanceof Error ? err.stack : undefined
+          stack: err instanceof Error ? err.stack : undefined,
+          context: {
+            chain: chain,
+            node: process.version,
+            runtime: process.env
+          }
         }),
       };
     }
