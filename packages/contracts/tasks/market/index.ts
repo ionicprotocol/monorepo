@@ -7,6 +7,7 @@ import "./deploy-dynamic-rewards-market";
 import "./deploy-static-rewards-market";
 import "./deploy";
 import "./borrow";
+import "./retire-frozen";
 import { Address } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
